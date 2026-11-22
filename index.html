@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#1f4e79">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>eBay販売マスター by Urushihara v1.2</title>
+<title>eBay販売マスター by Urushihara v1.3</title>
 <style>
 :root{--main:#1f4e79;--acc:#e8a317;--ok:#2e7d32;--ng:#c62828;--bg:#f4f6f9;--card:#fff;--txt:#222;--sub:#666;--line:#dde2e8}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -56,7 +56,7 @@ label.chk input{width:22px;height:22px;flex-shrink:0;margin-top:3px}
 </style>
 </head>
 <body>
-<header><h1>eBay販売マスター</h1><div class="by">by Urushihara v1.2</div></header>
+<header><h1>eBay販売マスター</h1><div class="by">by Urushihara v1.3</div></header>
 <main id="app"></main>
 <nav>
 <a href="#" data-tab="learn"><span class="i">📘</span>学ぶ</a>
@@ -603,6 +603,81 @@ const QA2=[
 ];
 
 QA2.forEach(x=>QA.push(x));
+// ===== 日本から販売するのに必要なこと =====
+const JP_GUIDE=`
+<p class="date">情報確認日：2026年11月22日（法律や手続きは変わることがあります。迷ったら税関・郵便局・税務署・警察署に確認してください）</p>
+<h3>① そろえるもの（アカウントとお金）</h3>
+<table><tr><th>必要なもの</th><th>ポイント</th></tr>
+<tr><td>eBayのアカウント</td><td>ebay.comで作る。名前・住所は英語（ローマ字）で登録</td></tr>
+<tr><td>Payoneerのアカウント</td><td>売上を米ドルで受け取る口座。個人/法人の種類は後で変えられない</td></tr>
+<tr><td>日本の銀行口座</td><td>Payoneerから円で引き出す先</td></tr>
+<tr><td>クレジットカード</td><td>海外で使えるVISAかMastercard（手数料の支払い用）</td></tr>
+<tr><td>本人確認書類</td><td>運転免許証など。Payoneerの審査で使う</td></tr>
+<tr><td>スマホとメール</td><td>eBayアプリで通知を受け取り、すぐ返信できるようにする</td></tr></table>
+<h3>② 英語の住所の書き方</h3>
+<p>日本と<b>逆の順番</b>（番地 → 町 → 区市 → 都道府県 → 郵便番号 → 国）で書きます。</p>
+<p>例：東京都中央区銀座1-2-3 ○○ビル101<br><b>101 ○○ Bldg, 1-2-3 Ginza, Chuo-ku, Tokyo 104-0061, Japan</b></p>
+<p>eBay・Payoneer・発送ラベルで<b>同じ書き方</b>にそろえましょう。</p>
+<h3>③ 必要な許可・届け出</h3>
+<table><tr><th>許可・届け出</th><th>必要な人</th><th>出す所</th></tr>
+<tr><td>古物商許可</td><td>中古品を仕入れて売る人</td><td>住所地の警察署</td></tr>
+<tr><td>開業届</td><td>事業として続ける人</td><td>税務署</td></tr>
+<tr><td>青色申告承認申請</td><td>控除を受けたい人（任意）</td><td>税務署</td></tr></table>
+<h3>④ 日本の税関のルール（郵便で送る場合）</h3>
+<ul><li><b>20万円以下</b>：税関への輸出申告はいりません。「税関告知書」を作って荷物に貼り、郵便局から出します</li>
+<li><b>20万円を超える</b>：税関への<b>輸出申告が必要</b>です。日本郵便に代わりに申告してもらうこともでき、英語のインボイス（明細書）が必要です</li>
+<li>同じ荷物に入れた品物の<b>合計額</b>で判断します</li></ul>
+<p>SpeedPAKやFedEx・DHLなどのクーリエは、配送会社が通関の手続きを案内してくれます。</p>
+<h3>⑤ 原産国の書き方</h3>
+<p>原産国は、買った国やブランドの国ではなく、<b>作られた国</b>です。商品の「Made in ○○」を見て書きます。日本のブランドでも中国製なら「China」です。アメリカの関税は原産国で変わるので、正確に書きましょう。</p>
+<h3>⑥ 日本から出すのに許可が必要な物・出せない物</h3>
+<ul><li><b>古美術品</b>・<b>文化財</b>（国宝・重要文化財・重要美術品など）：輸出できない、または許可が必要</li>
+<li><b>ワシントン条約</b>の対象（象牙・べっ甲・ワニ革・一部の木材など）：<b>一部に使われているだけでも対象</b>。許可なしでは出せない</li>
+<li><b>種・球根などの植物</b>：検疫や許可が必要な場合がある</li>
+<li><b>一部の電子機器・部品</b>（高性能な物など）：外為法の規制で許可が必要な場合がある</li></ul>
+<div class="warn">⚠️ 配送会社に手続きを頼んでも、法律を守る責任は<b>売る人（輸出者）</b>にあります。古い工芸品、動物の素材が使われた物、高性能な機器は、出品前に税関に確認しましょう。</div>
+<h3>⑦ 消費税の証明書類を保管する</h3>
+<p>輸出は消費税が免除（輸出免税）されますが、そのためには輸出の証明書類の保存が必要です。郵便で送った場合は、<b>荷物に貼った伝票の控え</b>と<b>郵便局の引受けの証明</b>などを保管します。品名・数量・価格がきちんと書かれているか確認しましょう。書類は<b>7年間</b>保管するのが基本です。</p>
+<h3>⑧ 日本から売るときの生活面の注意</h3>
+<ul><li><b>時差</b>：アメリカは日本と昼夜がほぼ逆。朝と夜にメッセージを確認する習慣をつける</li>
+<li><b>日本の祝日・連休</b>：Handling time（発送までの日数）は営業日で数える。連休前は余裕のある日数に</li>
+<li><b>年末年始・お盆</b>：配送会社が混んで遅れやすい。早めに発送する</li>
+<li><b>大型連休で発送できない日</b>：eBayの「Time away（休暇設定）」で一時的に止める</li></ul>
+<div class="point">📌 まとめ<br>・住所はローマ字で、どこでも同じ書き方に<br>・中古の仕入れ販売は古物商許可、事業なら開業届<br>・郵便は20万円を超えると輸出申告が必要<br>・原産国は「作られた国」<br>・文化財・ワシントン条約・一部の機器は許可が必要<br>・伝票の控えなど証明書類を7年保管</div>`;
+
+const CHECK_START={id:"start",title:"始める前チェックリスト（日本から販売）",items:[
+"eBay（ebay.com）のアカウントを作った",
+"住所を英語（ローマ字）で、eBay・Payoneerとも同じ書き方にした",
+"Payoneerのアカウントを作った（個人/法人の種類を確認した）",
+"Payoneerに日本の銀行口座を登録した",
+"海外で使えるVISAかMastercardを登録した",
+"本人確認書類を用意し、Payoneerの審査を終えた",
+"eBayのアプリをスマホに入れ、通知をオンにした",
+"中古品を仕入れて売る場合、古物商許可を取った",
+"事業として続ける場合、開業届を出した（青色申告も検討）",
+"セラーポータル（日本語サポート）に登録した",
+"はかり・メジャー・梱包材・白い背景を用意した",
+"SpeedPAKなど発送方法を決め、登録した",
+"売る予定の物が、日本から出せる物か確かめた（文化財・ワシントン条約・一部の機器）",
+"伝票の控えなど、輸出の証明書類を保管する場所を決めた",
+"休みの日の発送や時差への対応を決めた"]};
+
+const QA3=[
+["日本から販売するのに何が必要？","eBayとPayoneerのアカウント、日本の銀行口座、海外で使えるクレジットカード、本人確認書類が必要です。中古品を仕入れて売るなら古物商許可も必要です。「日本から販売するのに必要なこと」のページにまとめています。",["日本から","必要なもの","何が必要","準備するもの"],0],
+["住所の英語表記は？","日本と逆の順番で、番地→町→区市→都道府県→郵便番号→Japanと書きます。例：1-2-3 Ginza, Chuo-ku, Tokyo 104-0061, Japan",["住所","英語表記","ローマ字","書き方"],0],
+["20万円を超える商品を郵便で送るには？","税関への輸出申告が必要です。日本郵便に申告を代わりに頼むこともでき、英語のインボイスが必要です。20万円以下なら税関告知書を貼るだけです。",["20万円","高額","輸出申告","税関告知書"],0],
+["原産国は何と書く？","作られた国を書きます。商品の「Made in ○○」を見てください。日本のブランドでも中国製なら「China」です。",["原産国","made in","生産国"],0],
+["古い美術品や骨董品は売れる？","古美術品や文化財（国宝・重要文化財・重要美術品など）は、輸出できない、または許可が必要な場合があります。出品前に税関に確認しましょう。",["骨董","美術品","文化財","アンティーク","古い"],0],
+["象牙やべっ甲が使われた物は？","ワシントン条約の対象で、一部に使われているだけでも許可なしでは輸出できません。扱わないのが安全です。",["象牙","べっ甲","ワシントン条約","ワニ革","毛皮"],0],
+["配送会社に頼めば法律は大丈夫？","手続きを頼んでも、法律を守る責任は売る人（輸出者）にあります。心配な物は税関に確認しましょう。",["責任","配送会社に任せ","法律","違反"],0],
+["時差はどうする？","アメリカは日本と昼夜がほぼ逆です。朝と夜にメッセージを確認する習慣をつけ、eBayアプリの通知をオンにしましょう。",["時差","夜中","時間帯"],0],
+["連休で発送できないときは？","eBayの「Time away（休暇設定）」で一時的に止めるか、Handling timeを長めにしましょう。年末年始やお盆は配送も遅れやすいです。",["連休","休み","年末年始","お盆","旅行","time away"],0],
+["輸出の証明書類は何年保管？","7年間の保管が基本です。郵便で送った場合は、伝票の控えと郵便局の引受けの証明などを残します。",["何年","保管","証明書類","7年"],0],
+["植物や種は送れる？","種・球根などの植物は、検疫や許可が必要な場合があります。出品前に確認しましょう。",["植物","種","球根","盆栽"],0]
+];
+
+QA3.forEach(x=>QA.push(x));
+CHECKLISTS.unshift(CHECK_START);
 </script>
 <script>
 const INFO_DATE="2026年11月22日";
@@ -753,6 +828,7 @@ function renderList(){
  const n=Object.keys(mem.passed).length;
  let h=`<div class="card"><b>学習の進み具合</b>　${n} / 13 段階 合格<div class="bar"><div style="width:${n/13*100}%"></div></div>
  <div class="date">各段階のテストで${QN}問中${PASS}問以上正解すると、次の段階が開きます。</div></div>`;
+ h+=`<div class="stage" id="jp"><div class="num" style="background:#c62828">🇯🇵</div><div><div class="t">日本から販売するのに必要なこと</div><div class="s">いつでも読めます（準備・許可・税関・証明書類）</div></div></div>`;
  STAGES.forEach(st=>{
   const p=mem.passed[st.id],u=unlocked(st);
   let cls="stage"+(p?" passed":"")+(!u?" locked":"");
@@ -763,7 +839,8 @@ function renderList(){
  h+=`<div class="card"><b>🏆 総合テスト</b>（全段階から20問・16問以上で合格）<div class="date">${ft?`合格 ${ft.score}/20（${ft.date}）`:allOk?"挑戦できます":"🔒 全13段階に合格すると開きます"}</div>${allOk?'<button id="final">総合テストを受ける</button>':""}</div>`;
  app.innerHTML=h;
  if(allOk)document.getElementById("final").onclick=startFinal;
- app.querySelectorAll(".stage").forEach(el=>el.onclick=()=>{
+ document.getElementById("jp").onclick=renderGuide;
+ app.querySelectorAll(".stage[data-id]").forEach(el=>el.onclick=()=>{
   const st=STAGES.find(s=>s.id==el.dataset.id);
   if(!unlocked(st)){alertBox("前の段階のテストに合格すると開きます。");return}
   renderStage(st);
@@ -772,6 +849,11 @@ function renderList(){
 function alertBox(msg){
  const d=document.createElement("div");d.className="card";d.style.cssText="position:fixed;left:14px;right:14px;top:40%;z-index:9;text-align:center;border:2px solid #1f4e79";
  d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),1800);
+}
+function renderGuide(){window.scrollTo(0,0);tab="learn";setNav();
+ app.innerHTML=`<div class="card"><h2>🇯🇵 日本から販売するのに必要なこと</h2>${JP_GUIDE}</div><button id="ck">始める前チェックリストを開く</button><button class="sub" id="back">一覧に戻る</button>`;
+ document.getElementById("ck").onclick=()=>{tab="tpl";setNav();renderCheck("start")};
+ document.getElementById("back").onclick=renderList;
 }
 function renderStage(st){window.scrollTo(0,0);
  app.innerHTML=`<div class="card"><h2>段階${st.id}　${esc(st.title)}</h2>${st.body}</div>
@@ -829,7 +911,7 @@ function searchQA(q){
  GLOSSARY.forEach(g=>{const w=g[0].split(/[（）\/ ]/).map(norm).filter(v=>v.length>1);if(w.some(v=>t.includes(v)))res.push({type:"g",sc:2.5,x:g})});
  return res.sort((a,b)=>b.sc-a.sc).slice(0,6);
 }
-function stageLink(id){const st=STAGES.find(s=>s.id==id);return `<a href="#" class="go" data-id="${id}">→ 段階${id}「${esc(st.title)}」を読む</a>`}
+function stageLink(id){if(id==0)return `<a href="#" class="go" data-id="0">→「日本から販売するのに必要なこと」を読む</a>`;const st=STAGES.find(s=>s.id==id);return `<a href="#" class="go" data-id="${id}">→ 段階${id}「${esc(st.title)}」を読む</a>`}
 function renderQA(q){
  q=q||"";
  let h=`<div class="card"><h2>質問コーナー</h2><p class="date">知りたいことを入力してください（例：送料にも手数料はかかる？／関税は誰が払う？）。ネットなしでも使えます。</p>
@@ -851,7 +933,7 @@ function showAns(q){
   :`<div class="card"><b>📖 ${esc(o.x[0])}</b><p>${esc(o.x[1])}</p>${stageLink(o.x[2])}</div>`).join("");
  bindGo(box);
 }
-function bindGo(el){el.querySelectorAll(".go").forEach(a=>a.onclick=e=>{e.preventDefault();const st=STAGES.find(s=>s.id==a.dataset.id);tab="learn";setNav();
+function bindGo(el){el.querySelectorAll(".go").forEach(a=>a.onclick=e=>{e.preventDefault();if(a.dataset.id=="0"){renderGuide();return}const st=STAGES.find(s=>s.id==a.dataset.id);tab="learn";setNav();
  if(unlocked(st))renderStage(st);else{renderList();alertBox(`段階${st.id}は、前の段階に合格すると読めます。`)}})}
 function renderGlossary(){window.scrollTo(0,0);
  app.innerHTML=`<div class="card"><h2>用語集</h2><button class="sub" id="bk">質問コーナーに戻る</button></div>`+
@@ -936,7 +1018,7 @@ function renderCalc(){
 function renderRecord(){
  let h=`<div class="card"><h2>合格の記録</h2><table><tr><th>段階</th><th>点数</th><th>合格日</th></tr>`;
  STAGES.forEach(st=>{const p=mem.passed[st.id];h+=`<tr><td>${st.id}. ${esc(st.title)}</td><td>${p?p.score+"/"+QN:"−"}</td><td>${p?p.date:"−"}</td></tr>`});
- h+=`<tr><td>🏆 総合テスト</td><td>${mem.final?mem.final.score+"/20":"−"}</td><td>${mem.final?mem.final.date:"−"}</td></tr></table></div><div class="card"><b>このアプリについて</b><p>eBay販売マスター by Urushihara v1.2<br>情報確認日：${INFO_DATE}<br>手数料やルールは変わることがあります。実際の販売前にeBay公式（セラーポータル）で確認してください。</p>
+ h+=`<tr><td>🏆 総合テスト</td><td>${mem.final?mem.final.score+"/20":"−"}</td><td>${mem.final?mem.final.date:"−"}</td></tr></table></div><div class="card"><b>このアプリについて</b><p>eBay販売マスター by Urushihara v1.3<br>情報確認日：${INFO_DATE}<br>手数料やルールは変わることがあります。実際の販売前にeBay公式（セラーポータル）で確認してください。</p>
  <button class="sub" id="reset">記録をすべて消す</button></div>`;
  app.innerHTML=h;
  document.getElementById("reset").onclick=()=>{
