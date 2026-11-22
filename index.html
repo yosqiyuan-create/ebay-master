@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#1f4e79">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>eBay販売マスター by Urushihara v1.3</title>
+<title>eBay販売マスター by Urushihara v3.2</title>
 <style>
 :root{--main:#1f4e79;--acc:#e8a317;--ok:#2e7d32;--ng:#c62828;--bg:#f4f6f9;--card:#fff;--txt:#222;--sub:#666;--line:#dde2e8}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -52,18 +52,33 @@ ul{padding-left:1.2em;margin:6px 0}
 a.go{display:inline-block;margin-top:6px;color:var(--main);font-weight:bold}
 label.chk{display:flex;gap:10px;align-items:flex-start;color:var(--txt);font-size:16px;margin:0;padding:10px 0;border-bottom:1px solid var(--line)}
 label.chk input{width:22px;height:22px;flex-shrink:0;margin-top:3px}
+.seg{display:flex;gap:6px;margin-bottom:12px}.seg button{margin:0;padding:10px 4px;font-size:15px;background:#e3e8ef;color:var(--txt)}.seg button.on{background:var(--main);color:#fff}
+details.card summary{font-size:17px;cursor:pointer;list-style:none}details.card summary::-webkit-details-marker{display:none}details.card summary::after{content:" ▼";color:var(--sub);font-size:13px}details[open].card summary::after{content:" ▲"}
+input[type=date]{min-height:44px}
+.gwrap{max-width:520px;margin:0 auto}
+#gcv{width:100%;image-rendering:pixelated;image-rendering:crisp-edges;border:3px solid #1b1b2f;border-radius:6px;background:#000;display:block;margin-bottom:8px}
+.gbox{background:#1b1b2f;color:#fff;border:3px solid #fff;outline:2px solid #1b1b2f;border-radius:8px;padding:10px 12px;margin:8px 2px;font-size:15px;line-height:1.6}
+.gbox .date,.gsmall{font-size:13px;color:#c9cbe0}
+.gstat{font-size:14px}.gch{margin-top:4px;color:#f2c230;font-weight:bold}.glv{font-size:12px;background:#2e6fd8;border-radius:6px;padding:1px 6px}
+.gmsg{min-height:90px}
+.gitem{background:#24244a}
+.gbtn{background:#2e6fd8;color:#fff;border:3px solid #1b1b2f;border-radius:10px;font-weight:bold;padding:12px 8px;margin-top:6px;width:100%;font-size:16px}
+.gbtn:disabled{opacity:.4}.gbtn.gsub{background:#5d6d7e}.gbtn.gend{background:#6c3483}.gbtn.gwarn{background:#c0392b}.gbtn.gsm{padding:8px;font-size:15px}
+.ggrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ggrid .gbtn,.ggrid2 .gbtn{margin-top:0}.ggrid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.gsel{margin-top:6px;font-size:15px}
+a.gx{color:#ff8a80}
 .exp{font-size:15px;margin-top:6px;padding:8px;background:#f7f9fb;border-radius:8px}
 </style>
 </head>
 <body>
-<header><h1>eBay販売マスター</h1><div class="by">by Urushihara v1.3</div></header>
+<header><h1>eBay販売マスター</h1><div class="by">by Urushihara v3.2</div></header>
 <main id="app"></main>
 <nav>
 <a href="#" data-tab="learn"><span class="i">📘</span>学ぶ</a>
 <a href="#" data-tab="qa"><span class="i">💬</span>質問</a>
-<a href="#" data-tab="calc"><span class="i">🧮</span>利益計算</a>
+<a href="#" data-tab="calc"><span class="i">💴</span>お金</a>
 <a href="#" data-tab="tpl"><span class="i">🧰</span>便利</a>
-<a href="#" data-tab="record"><span class="i">🏅</span>記録</a>
+<a href="#" data-tab="game"><span class="i">🎮</span>ゲーム</a>
 </nav>
 <script>
 // ===== 段階5〜13 =====
@@ -109,7 +124,7 @@ quiz:[
 <p>※中古品を仕入れて売るなら古物商許可が必要です（段階2）。</p>
 <h3>仕入れ値の決め方（逆算）</h3>
 <div class="point">いくらで売れるか（相場）を先に調べる → 手数料・送料・関税を引く → 残った額から、ほしい利益を引いた額が「仕入れてよい上限」</div>
-<p>「利益計算」タブで販売価格と送料を入れ、仕入れ値を変えながら利益がプラスになる範囲を確かめましょう。</p>
+<p>「お金」タブの「仕入れ上限」に、売れる値段とほしい利益を入れると、仕入れてよい上限がすぐにわかります。</p>
 <h3>目標の利益率</h3>
 <p>初心者は<b>利益率20%前後</b>を一つの目安にすると、値下げや送料の変化があっても赤字になりにくいです。</p>
 <h3>避けるべき仕入れ</h3>
@@ -127,7 +142,7 @@ quiz:[
 ["在庫切れでキャンセルするとどうなる？",["アカウントの評価が下がる","手数料が無料になる","評価が上がる","何も起きない"],0,"在庫切れキャンセルは取引の欠陥（Defect）になります。"],
 ["フリマで仕入れるときの注意点は？",["写真だけで判断するので状態に注意","必ず新品が届く","古物商許可は絶対に不要","返品は必ずできる"],0,"実物を見られないので、状態の確認が大切です。"],
 ["避けるべき仕入れはどれ？",["偽物の疑いがある物","状態の良い中古カメラ","日本限定のおもちゃ","自分の不用品"],0,"偽物の販売はアカウント停止の危険があります。"],
-["利益がプラスになる仕入れ値の範囲を確かめるのに便利なのは？",["アプリの利益計算タブ","天気予報","カレンダー","地図アプリ"],0,"仕入れ値を変えながら利益を確かめられます。"]
+["利益がプラスになる仕入れ値の範囲を確かめるのに便利なのは？",["アプリの「お金」タブ","天気予報","カレンダー","地図アプリ"],0,"仕入れ値を変えながら利益を確かめられます。"]
 ]},
 {id:7,title:"出品ページ作り",sub:"タイトル・写真・説明文・価格",body:`
 <h3>出品ページの6つの要素</h3>
@@ -227,7 +242,7 @@ quiz:[
 <h3>対応の3原則</h3>
 <ul><li><b>24時間以内に返信</b>する</li><li>短く・丁寧に・正直に</li><li>トラブルは<b>eBayが入る前に</b>自分で解決する</li></ul>
 <h3>英語が苦手でも大丈夫</h3>
-<p>「定型文」タブに、よく使う英語の文と日本語訳を用意しています。コピーして使えます。届いたメッセージは翻訳アプリで日本語にして読みましょう。</p>
+<p>「便利」タブの定型文に、よく使う英語の文と日本語訳を用意しています。コピーして使えます。届いたメッセージは翻訳アプリで日本語にして読みましょう。</p>
 <h3>よくあるトラブルと対応</h3>
 <table><tr><th>トラブル</th><th>対応</th></tr>
 <tr><td>商品が届かない（Item not received）</td><td>追跡番号で状況を確認して伝える。長く止まっていたら配送会社に問い合わせ</td></tr>
@@ -410,24 +425,24 @@ const GLOSSARY=[
 // ===== Q&A =====
 // [質問, 答え, キーワード, 関連段階]
 const QA=[
-["eBayとは何ですか？","世界190以上の国と地域に買い手がいる、ネット通販・オークションサイトです。日本にいながら海外に売れます。",["ebay","イーベイ"],1],
-["英語ができなくても売れますか？","売れます。日本語のサポートサイト（セラーポータル）があり、出品文は決まった形で書けます。メッセージは翻訳アプリと「定型文」タブで対応できます。",["英語","できない","苦手","話せない","読めない"],10],
+["eBayとは何ですか？","世界190以上の国と地域に買い手がいる、ネット通販・オークションサイトです。日本にいながら海外に売れます。",["ebayとは","イーベイとは","ebayって","ebayは何","ebayってなに"],1],
+["英語ができなくても売れますか？","売れます。日本語のサポートサイト（セラーポータル）があり、出品文は決まった形で書けます。メッセージは翻訳アプリと「便利」タブの定型文で対応できます。",["英語","できない","苦手","話せない","読めない"],10],
 ["どのサイトに出品すればいいですか？","日本のセラーはふつうアメリカのebay.comに出品します。ebay.comの商品は他の国の人にも表示されます。",["どのサイト","ebay.com","サイト","出品先"],1],
 ["何が売れますか？","日本からは中古カメラ・レンズ、高級腕時計、トレーディングカード、中古ブランドバッグ、フィギュア・ゲームなどが人気です。",["何が売れる","売れる物","人気","売れ筋","ジャンル"],1],
 ["オークションと固定価格はどちらがいい？","初心者は固定価格（Buy It Now）がおすすめです。珍しくて値上がりが期待できる物はオークションも向いています。",["オークション","固定価格","buy it now","どっち","どちら"],1],
-["始めるのに何が必要？","eBayのアカウント、Payoneerのアカウント、日本の銀行口座、海外で使えるVISAかMastercardのクレジットカードが必要です。",["始める","必要","準備","登録"],2],
+["始めるのに何が必要？","eBayのアカウント、Payoneerのアカウント、日本の銀行口座、海外で使えるVISAかMastercardのクレジットカードが必要です。",["始める","始めるのに","準備","何が必要"],2],
 ["売上はどうやって受け取る？","売上はPayoneer（ペイオニア）に米ドルで入金され、そこから日本の銀行口座に円で引き出します。",["売上","受け取","入金","お金","振込","引き出"],2],
 ["Payoneerとは？","eBayの売上を受け取るためのオンライン口座サービスです。",["payoneer","ペイオニア"],2],
 ["個人とビジネスどちらで登録する？","開業届がありビジネス用の書類を出せるならビジネス、それ以外はパーソナル（個人）です。後から変更できないので注意してください。",["個人","法人","ビジネス","パーソナル","アカウントの種類"],2],
 ["Payoneerの審査が進まない","eBayとPayoneerの登録情報（名前・住所など）が一致しているか確認してください。住所の書き方までそろえましょう。",["審査","進まない","承認","書類"],2],
 ["古物商許可は必要？","自分の不用品を売るだけならふつうは不要です。中古品を仕入れて売るなら必要で、住所地の警察署で申請します。",["古物商","許可","警察"],2],
 ["クレジットカードは何が使える？","手数料の支払い用に、海外で使えるVISAかMastercardを登録します。",["クレジットカード","カード","visa","mastercard"],2],
-["手数料はいくら？","目安として売上の約15〜16%です。落札手数料13.6%（多くのカテゴリー）、1注文ごとに$0.30〜0.40、海外決済手数料1.35%がかかります。",["手数料","いくら","費用","コスト","何パーセント","%"],3],
+["手数料はいくら？","目安として売上の約15〜16%です。落札手数料13.6%（多くのカテゴリー）、1注文ごとに$0.30〜0.40、海外決済手数料1.35%がかかります。",["手数料","費用","コスト","何パーセント","手数料率"],3],
 ["落札手数料（FVF）とは？","売れたときにかかる手数料です。多くのカテゴリーで13.6%、本・音楽などは15.3%です。送料も含めた売上総額にかかります。",["落札手数料","fvf","final value"],3],
 ["出品手数料はかかる？","毎月250品までは無料です。超えると1品$0.35（ストアなし）かかります。",["出品手数料","出品するだけ","無料枠","insertion"],3],
 ["海外決済手数料とは？","日本のセラーが海外に売ると、売上総額の1.35%がかかる手数料です。",["海外決済","international","1.35"],3],
 ["送料にも手数料がかかる？","かかります。落札手数料は送料や税金を含めた売上総額に対してかかります。",["送料","手数料","かかる"],3],
-["利益の計算方法は？","利益＝売上（円）−eBay手数料−為替の手数料−仕入れ値−実際の送料−関税など。「利益計算」タブで計算できます。",["利益","計算","儲け","もうけ","赤字"],3],
+["利益の計算方法は？","利益＝売上（円）−eBay手数料−為替の手数料−仕入れ値−実際の送料−関税など。「お金」タブの利益計算で計算できます。",["利益","計算","儲け","もうけ","赤字"],3],
 ["為替の影響は？","売上はドルなので、円安なら円での受取額が増え、円高なら減ります。利益計算ではレートを入れて確認しましょう。",["為替","円安","円高","レート","ドル"],3],
 ["販売リミットとは？","出品できる数と合計金額の上限です。最初は「月10品または500ドル」程度が多いです。",["リミット","上限","制限","セリングリミット","出品できない"],4],
 ["リミットを上げるには？","eBayが毎月自動で調整します。セラーポータルやSeller Hubから申請もできます。少しずつ確実に売って良い評価を集めましょう。",["リミットアップ","上げる","増やす","申請"],4],
@@ -448,7 +463,7 @@ const QA=[
 ["どの発送方法がいい？","初心者はeBay公式のSpeedPAKが安心です。セラー保護があります。高額品や重い物はFedExやDHLなども検討します。",["発送方法","配送","送り方","どれ"],8],
 ["SpeedPAKとは？","eBay公式の配送サービスです。専用サイトCPaSSでラベルを作ります。条件を満たすと商品未着の悪い評価が自動で削除されます。",["speedpak","スピードパック","cpass"],8],
 ["追跡番号は必要？","必要です。発送したら必ずeBayに登録しましょう。届かないと言われたときの証明になります。",["追跡","トラッキング","tracking"],8],
-["梱包のコツは？","緩衝材で包み、すき間を埋め、ビニール袋で防水します。壊れやすい物は二重箱にします。",["梱包","包装","箱","緩衝材"],8],
+["梱包のコツは？","緩衝材で包み、すき間を埋め、ビニール袋で防水します。壊れやすい物は二重箱にします。",["梱包","包装","緩衝材","包み方"],8],
 ["送料はどう決まる？","重さと箱の大きさで決まります。大きくて軽い箱は容積重量で計算されることがあります。",["送料","決まる","重さ","容積"],8],
 ["関税は誰が払う？","アメリカ向け（2,500ドル未満）とEU向け（150ユーロ以下）はDDPが必須で、セラーが前払いします。その費用は価格や送料に入れておきます。",["関税","誰が","払う","duty","税関"],9],
 ["DDPとは？","関税込みの発送方式です。セラーが発送時に関税を前払いし、買い手は受け取り時に払いません。",["ddp","関税込み"],9],
@@ -459,7 +474,7 @@ const QA=[
 ["送れない物は？","生もの・多くの食品、リチウム電池単体、香水やスプレー缶など燃えやすい物、象牙など条約で禁止の物、医薬品、偽物などです。",["送れない","禁止","発送できない","電池","香水"],9],
 ["HSコードとは？","税関で使う世界共通の品目番号です。申告で正確に書く必要があります。",["hsコード","hs","品目"],9],
 ["メッセージの返信はいつまで？","24時間以内が目安です。短く・丁寧に・正直に返信しましょう。",["返信","メッセージ","連絡"],10],
-["商品が届かないと言われた","追跡番号で状況を確認して伝えます。長く止まっていたら配送会社に問い合わせます。「定型文」タブに文例があります。",["届かない","未着","not received"],10],
+["商品が届かないと言われた","追跡番号で状況を確認して伝えます。長く止まっていたら配送会社に問い合わせます。「便利」タブの定型文に文例があります。",["届かない","未着","not received"],10],
 ["説明と違うと言われた","写真を送ってもらい、謝って返品か一部返金を提案します。ケースになる前に解決しましょう。",["説明と違う","not as described","壊れて","不良"],10],
 ["ケースとは？","買い手がeBayに正式に助けを求めることです。セラーが解決できずに終わると評価に大きく影響します。",["ケース","case","クレーム"],10],
 ["キャンセルを頼まれた","発送前ならすぐ応じましょう。",["キャンセル","取り消し","cancel"],10],
@@ -484,7 +499,7 @@ const SYN=[["送料","配送料","発送費","配送費","郵送料"],["発送",
 const CHECKLISTS=[
 {id:"list",title:"出品前チェックリスト",items:[
 "Sold Items（売れた値段）で相場を調べた",
-"利益計算タブで利益がプラスになるか確かめた（関税・送料込み）",
+"「お金」タブの利益計算で利益がプラスになるか確かめた（関税・送料込み）",
 "送れない物・注意が必要な物ではないか確かめた（段階9）",
 "偽物の疑いがない・VeRO対象で問題がないか確かめた",
 "商品が手元にある（無在庫ではない）",
@@ -512,14 +527,14 @@ const CHECKLISTS=[
 "ラベルを箱にしっかり貼った",
 "Handling time内に発送できる",
 "発送後、追跡番号をeBayに登録した",
-"買い手に発送のお知らせを送った（定型文タブ）"]}
+"買い手に発送のお知らせを送った（「便利」タブの定型文）"]}
 ];
 
 // ===== 追加Q&A =====
 const QA2=[
 ["eBayは安全ですか？","eBayには買い手と売り手を守るルールがあります。規約を守り、追跡番号を登録し、正直に出品すれば、トラブルを防げます。",["安全","危険","怖い","詐欺"],1],
 ["日本語でサポートを受けられますか？","イーベイ・ジャパンの日本語サポートサイト「セラーポータル」で、出品方法などを日本語の動画やマニュアルで学べます。",["日本語","サポート","問い合わせ","相談"],1],
-["どの国に売れますか？","ebay.comの商品は世界中の人に表示されます。アメリカが中心ですが、イギリス・オーストラリア・ヨーロッパなどにも売れます。",["国","どこに","海外","世界"],1],
+["どの国に売れますか？","ebay.comの商品は世界中の人に表示されます。アメリカが中心ですが、イギリス・オーストラリア・ヨーロッパなどにも売れます。",["どの国","どこの国","どこに売","海外","世界"],1],
 ["副業でもできますか？","できます。最初は少ない数から始め、空いた時間で出品・発送できる量にしましょう。所得が年20万円を超えたら確定申告が必要になることがあります。",["副業","サラリーマン","会社員","空いた時間"],1],
 ["どのくらい稼げますか？","商品・仕入れ値・出品数で大きく変わります。最初はリミットがあるので、小さく始めて実績を積み、少しずつ増やすのが現実的です。",["稼げる","儲かる","月収","収入"],13],
 ["初期費用はいくら？","アカウント作成は無料で、出品も毎月250品まで無料です。必要なのは仕入れ代、梱包材、はかりやメジャーなどの道具代です。",["初期費用","始めるのにいくら","元手","資金"],2],
@@ -533,13 +548,13 @@ const QA2=[
 ["売上はいつ入金される？","入金のタイミングはアカウントの状況などで変わります。Seller HubやPayoneerで入金予定を確認できます。",["いつ入金","入金日","タイミング"],2],
 ["古物商許可の取り方は？","住所地の警察署（生活安全課など）で申請します。申請書や身分証明書などが必要です。手数料もかかるので、警察署で確認してください。",["古物商の取り方","古物商申請","許可の取り方"],2],
 ["ストアありの落札手数料は？","ストアを契約すると、多くのカテゴリーで落札手数料が下がります。料率は時期で変わるので、セラーポータルの料金ページで確認してください。",["ストア手数料","ストアの手数料"],3],
-["本やCDの手数料は？","本・映画・音楽などは落札手数料が15.3%です（ストアなし）。",["本","cd","dvd","音楽","雑誌"],3],
+["本やCDの手数料は？","本・映画・音楽などは落札手数料が15.3%です（ストアなし）。",["本の","書籍","cd","dvd","音楽","雑誌"],3],
 ["時計やバッグの手数料は？","時計や女性用バッグなどは、金額によって料率が変わるカテゴリーがあります。利益計算では15%を選んで目安にし、正確な率は料金ページで確認しましょう。",["時計","バッグ","腕時計"],3],
 ["$10以下の安い商品は損？","$10以下でも1注文ごとに$0.30かかるので、手数料の割合が高くなります。安い商品はまとめ売りにすると効率が良くなります。",["安い","10ドル以下","低価格","まとめ売り"],3],
 ["手数料はいつ引かれる？","落札手数料などは売上から自動的に差し引かれます。差し引けない分は登録したクレジットカードに請求されることがあります。",["いつ引かれる","差し引","請求"],3],
 ["円安と円高どちらが有利？","売上はドルなので、円安のほうが円での受取額が増えて有利です。仕入れが円なら、円安は利益が出やすくなります。",["円安","円高","有利"],3],
 ["送料無料にするべき？","送料無料にすると検索で選ばれやすいですが、送料を商品価格に入れる必要があります。利益計算で確かめてから決めましょう。",["送料無料","free shipping","フリーシッピング"],3],
-["利益が出ない原因は？","手数料（約15〜16%）、送料、関税、為替の手数料を計算に入れていないことが多いです。利益計算タブで全部を入れて確認しましょう。",["利益が出ない","赤字","損"],3],
+["利益が出ない原因は？","手数料（約15〜16%）、送料、関税、為替の手数料を計算に入れていないことが多いです。「お金」タブの利益計算で全部を入れて確認しましょう。",["利益が出ない","赤字","損する","損をする"],3],
 ["リミットはいつ増える？","eBayは毎月アカウントを確認して自動的に調整します。実績と良い評価を積むと増えやすくなります。",["いつ増える","リミット増加","自動"],4],
 ["リミットいっぱいまで出品していい？","上限の範囲内なら出品できます。ただし、まずは確実に売って発送し、良い評価を集めることを優先しましょう。",["いっぱい","上限まで","全部出品"],4],
 ["リミットを超えて出品したい","上限を超えては出品できません。売れて枠が空くのを待つか、リミットアップを申請しましょう。",["超えて","リミットオーバー","出品できない"],4],
@@ -564,13 +579,13 @@ const QA2=[
 ["価格はいくらにする？","Soldの相場で、同じ状態の商品と比べて決めます。利益計算で利益が残るか必ず確かめましょう。",["価格設定","値段の決め方","いくらで売る"],7],
 ["出品期間は？","固定価格はふつう「Good 'Til Cancelled（取り消すまで出品）」です。オークションは日数を選びます。",["出品期間","いつまで","gtc"],7],
 ["送料の設定方法は？","出品時の配送設定（Shipping policy）で、発送方法と送料を決めます。重さと大きさを測ってから設定しましょう。",["送料設定","shipping policy","配送設定"],7],
-["海外の買い手が値下げを求めてきた","Best Offerで受けるか、定型文タブの「値下げを断る」で丁寧に断りましょう。利益が残る範囲なら応じてもかまいません。",["値下げ","安くして","ディスカウント"],10],
+["海外の買い手が値下げを求めてきた","Best Offerで受けるか、「便利」タブの定型文「値下げを断る」で丁寧に断りましょう。利益が残る範囲なら応じてもかまいません。",["値下げ","安くして","ディスカウント"],10],
 ["国際郵便で送れる？","日本郵便でも海外に送れます。ただしアメリカ向け・EU向けはDDPが必須なので、その条件に合う送り方か事前に確認しましょう。",["郵便","日本郵便","ems","郵便局"],8],
 ["FedExやDHLは使える？","使えます。速くて追跡が確実なので、高額品や重い物に向いています。SpeedPAKにもFedExやDHLを使う種類があります。",["fedex","dhl","ups","クーリエ"],8],
 ["SpeedPAKの登録方法は？","eBay SpeedPAKのユーザーガイドから新規登録します。ラベルは専用サイトCPaSSで作ります。",["speedpak登録","cpass登録","使い方"],8],
 ["荷物が壊れて届いた","まず謝って写真を送ってもらい、返金や交換で解決します。保険や補償の条件は配送会社によって違うので確認しましょう。",["壊れた","破損","割れた"],8],
 ["発送が間に合わない","買い手にすぐ連絡して謝りましょう（定型文「発送が遅れるお詫び」）。発送遅延は評価に影響するので、Handling timeは余裕のある日数にしましょう。",["間に合わない","遅れる","遅延"],8],
-["箱はどこで手に入る？","郵便局やホームセンター、通販で買えます。商品に合った小さめの箱を使うと送料を抑えられます。",["箱","段ボール","梱包材"],8],
+["箱はどこで手に入る？","郵便局やホームセンター、通販で買えます。商品に合った小さめの箱を使うと送料を抑えられます。",["箱はどこ","段ボール","梱包材"],8],
 ["リチウム電池は送れる？","電池だけを送るのは多くの配送方法で禁止です。機器に入った電池は条件付きで送れることがあるので、配送会社に確認してください。",["リチウム","電池","バッテリー"],9],
 ["食品は送れる？","生ものは送れません。お菓子なども国によって制限があります。初心者は食品を避けるのが安全です。",["食品","お菓子","食べ物"],9],
 ["香水やスプレーは送れる？","燃えやすい物は航空便で送れないことが多いです。基本的に避けましょう。",["香水","スプレー","化粧品"],9],
@@ -673,11 +688,51 @@ const QA3=[
 ["時差はどうする？","アメリカは日本と昼夜がほぼ逆です。朝と夜にメッセージを確認する習慣をつけ、eBayアプリの通知をオンにしましょう。",["時差","夜中","時間帯"],0],
 ["連休で発送できないときは？","eBayの「Time away（休暇設定）」で一時的に止めるか、Handling timeを長めにしましょう。年末年始やお盆は配送も遅れやすいです。",["連休","休み","年末年始","お盆","旅行","time away"],0],
 ["輸出の証明書類は何年保管？","7年間の保管が基本です。郵便で送った場合は、伝票の控えと郵便局の引受けの証明などを残します。",["何年","保管","証明書類","7年"],0],
-["植物や種は送れる？","種・球根などの植物は、検疫や許可が必要な場合があります。出品前に確認しましょう。",["植物","種","球根","盆栽"],0]
+["植物や種は送れる？","種・球根などの植物は、検疫や許可が必要な場合があります。出品前に確認しましょう。",["植物","種子","球根","盆栽"],0]
 ];
 
 QA3.forEach(x=>QA.push(x));
 CHECKLISTS.unshift(CHECK_START);
+// ===== 最初の1品ガイド =====
+const FIRST=[
+{t:"売る物を1つ決める",d:"家にある不用品から、小さくて軽く、壊れにくい物を1つ選びます。最初は利益より「一通りやってみる」ことが目的です。",tasks:["小さくて軽い物を選んだ","送れない物（電池だけ・香水・生もの・象牙など）ではない","動作や状態を確認した"],link:5},
+{t:"アカウントと受取口座を準備する",d:"eBayとPayoneerのアカウントを作り、銀行口座とクレジットカードを登録します。住所はローマ字で、どこでも同じ書き方にします。",tasks:["eBayのアカウントを作った","Payoneerを作り、eBayとつないだ","クレジットカードを登録した","Payoneerの審査が終わった"],link:0},
+{t:"相場を調べる",d:"ebay.comで商品名を英語で検索し、Filterの「Sold Items」で売れた値段を3〜5件見ます。送料込みの合計で比べます。",tasks:["Sold Itemsで売れた値段を見た","同じ状態の物の値段をメモした","送料の設定も確認した"],link:5},
+{t:"利益を計算する",d:"「お金」タブの利益計算で、販売価格・送料・関税の目安を入れて、赤字にならないか確かめます。",tasks:["利益計算で利益がプラスになった","関税の目安を入れた"],link:3},
+{t:"写真を撮る",d:"白い背景で、明るい場所で撮ります。正面・裏・横・付属品・型番・傷をそれぞれ撮ります。",tasks:["白い背景で撮った","正面・裏・横・付属品を撮った","傷や汚れをはっきり撮った"],link:7},
+{t:"重さと大きさを測って送料を決める",d:"梱包した状態の重さと箱のサイズを測り、発送方法（SpeedPAKなど）と送料を決めます。",tasks:["梱包した状態の重さを測った","箱のサイズを測った","発送方法と送料を決めた"],link:8},
+{t:"出品する",d:"Seller Hubの「Create listing」から出品します。「ジャンル別のコツ」と「出品前チェックリスト」を見ながら入力します。",tasks:["タイトル（80文字以内）を書いた","Item specificsを埋めた","説明文に状態と傷を書いた","価格・Handling time・返品を設定した","出品前チェックリストをすべてチェックした"],link:7},
+{t:"売れたら買い手に連絡する",d:"売れたらお礼のメッセージを送ります（「便利」タブの定型文「お礼（購入直後）」）。支払いが済んでいるか確認します。",tasks:["支払いを確認した","お礼のメッセージを送った"],link:10},
+{t:"梱包して発送する",d:"「発送前チェックリスト」を見ながら梱包し、Handling time内に発送します。アメリカ・EU向けはDDPの方法を選びます。",tasks:["発送前チェックリストをすべてチェックした","Handling time内に発送した","DDPが必要な国ならDDPで送った"],link:8},
+{t:"追跡番号を登録して記録する",d:"追跡番号をeBayに登録し、発送のお知らせを送ります。最後に「お金」タブの記録帳に、この取引を記録します。",tasks:["追跡番号をeBayに登録した","発送のお知らせを送った","記録帳に記録した","伝票の控えを保管した"],link:12}
+];
+
+// ===== ジャンル別のコツ =====
+const GENRES=[
+{n:"📷 カメラ・レンズ",sell:"フィルムカメラ、オールドレンズ、コンパクトデジカメ、日本製の一眼レフ",photo:"レンズは光にかざして、カビ・くもり・キズが見えるように撮る。シャッターや液晶の表示も撮る",desc:"動作確認の内容（シャッター・露出計・AF）を具体的に書く。カビやくもりは必ず書く",en:[["Tested, works properly","動作確認済み、正常に動きます"],["No fungus, no haze","カビなし、くもりなし"],["Shutter speeds work accurately","シャッター速度は正確に動きます"]],warn:"電池は外して送るか、配送会社の条件を確認する。レンズは衝撃に弱いので厳重に梱包"},
+{n:"🃏 トレーディングカード",sell:"ポケモンカード、ワンピースカード、遊戯王などの日本版・限定カード",photo:"表と裏、四隅、表面のキズを明るく撮る。光の反射に注意",desc:"日本版（Japanese）であること、カード番号、状態を書く。鑑定済みなら鑑定会社と点数",en:[["Japanese version","日本版"],["Near Mint condition","ほぼ新品の状態"],["Shipped in a sleeve and top loader","スリーブと硬質ケースに入れて発送"]],warn:"偽物や加工品に注意。スリーブ＋硬質ケース＋厚紙で折れないように送る"},
+{n:"⌚ 腕時計",sell:"日本製の時計（セイコー・シチズン・カシオなど）、日本限定モデル、ヴィンテージ時計",photo:"文字盤、裏ぶた、ベルト、留め具、キズ、付属品（箱・保証書）を撮る",desc:"動いているか、時刻の進み遅れ、ベルトのサイズ（腕の周りの長さ）を書く",en:[["Running, keeps good time","動いていて、時刻も正確です"],["Fits wrist up to 18cm","腕回り18cmまで"],["Comes with original box","元の箱付き"]],warn:"高級ブランドは偽物の疑いに注意。高額品は真贋保証の対象になることがある"},
+{n:"🎮 ゲーム・ゲーム機",sell:"日本版のソフト、レトロゲーム、限定版、日本でしか出ていないゲーム",photo:"ソフトの表裏、説明書、箱、端子部分を撮る",desc:"日本版（NTSC-J）であること、海外の機械では動かない場合があることを書く",en:[["Japanese version (NTSC-J)","日本版（NTSC-J）"],["May not work on US consoles","アメリカの本体では動かない場合があります"],["Tested and working","動作確認済み"]],warn:"本体に内蔵電池がある場合は配送条件を確認。地域の違いは必ず説明する"},
+{n:"🧸 フィギュア・おもちゃ",sell:"アニメのフィギュア、プラモデル、日本限定・くじの景品、昔のおもちゃ",photo:"箱の表裏・側面、本体の全体、塗装のはげやキズを撮る",desc:"箱あり・なし、開封・未開封、付属品がそろっているかを書く",en:[["Brand new, unopened","新品・未開封"],["Box has minor damage","箱に小さな傷みがあります"],["All parts included","部品はすべてそろっています"]],warn:"箱の状態も評価の対象。箱をつぶさないよう二重箱で送る"},
+{n:"🎌 着物・和雑貨",sell:"着物、帯、扇子、和柄の小物、日本らしい雑貨",photo:"全体、柄の拡大、シミや汚れ、素材のタグを撮る",desc:"素材（絹・ポリエステル）、サイズ（cm）、シミの有無を書く",en:[["Silk kimono","絹の着物"],["Small stain (see photos)","小さなシミがあります（写真参照）"],["Length 160cm","長さ160cm"]],warn:"サイズは必ずcmで（インチも併記すると親切）。においにも注意"},
+{n:"🏺 陶器・骨董",sell:"日本の陶器、茶道具、漆器（新しい物・一般的な物）",photo:"全体、底の印（銘）、欠け・ひび・修理あとを撮る",desc:"作者・窯・年代がわかれば書く。わからなければ「不明」と正直に書く",en:[["Japanese pottery","日本の陶器"],["No chips or cracks","欠けやひびはありません"],["Artist unknown","作者は不明です"]],warn:"古美術品・文化財は輸出に許可が必要な場合がある。象牙やべっ甲が使われた物は扱わない（「日本から販売するのに必要なこと」参照）"},
+{n:"🎵 オーディオ・楽器",sell:"日本製のアンプ、カセットデッキ、エフェクター、楽器",photo:"全体、端子、つまみ、型番ラベル、動作中の様子を撮る",desc:"動作確認の内容と、電圧（日本は100V）を書く。海外では変圧器が必要な場合がある",en:[["Japanese 100V model","日本の100V仕様です"],["Requires a step-down transformer","変圧器が必要です"],["All functions tested","すべての機能を確認済み"]],warn:"重い物は送料が高い。電圧の違いは必ず説明する（トラブルの原因になりやすい）"}
+];
+
+// ===== 関税の目安 =====
+const DUTY_INFO="関税の目安：アメリカ向けは日本製の多くの商品で15%（一般の関税を含む、2025年9月時点）、EU向け（150ユーロ以下）は1品3ユーロ。DDPの配送会社の手数料が別にかかることがあります。実際の額は配送会社の見積もりで確認してください。";
+
+const QA4=[
+["最初の1品はどう進める？","「学ぶ」タブの「最初の1品ガイド」で、売る物を決める所から発送・記録まで10ステップで進められます。",["最初","1品目","初めて","はじめて","何から"],-1],
+["カメラを売るコツは？","レンズのカビ・くもりを光にかざして撮り、動作確認の内容を具体的に書きます。「ジャンル別のコツ」に英語の表現もあります。",["カメラのコツ","レンズのコツ"],7],
+["仕入れの上限はどう計算する？","「お金」タブの「仕入れ上限」で、売る値段とほしい利益を入れると、仕入れてよい上限額が出ます。",["仕入れ上限","逆算","いくらまで"],6],
+["売上の記録はどうする？","「お金」タブの「記録帳」に1品ずつ記録すると、月ごとの利益が自動で集計されます。バックアップのコピーも取れます。",["記録","帳簿","記録帳","集計"],12],
+["電圧の違いは？","日本は100Vです。海外では電圧が違うので、家電やオーディオを売るときは「100V仕様」と書き、変圧器が必要な場合があることを伝えます。",["電圧","100v","変圧器","コンセント"],7],
+["日本版のゲームは海外で動く？","地域の違いで動かない場合があります。説明文に日本版（NTSC-J）であることと、動かない場合があることを書きましょう。",["日本版","ntsc","リージョン","地域"],7]
+];
+
+QA4.push(["送料はいくら？","国・重さ・箱の大きさ・発送方法で変わります。梱包した状態で重さとサイズを測り、SpeedPAK（CPaSS）や日本郵便の料金表で調べましょう。軽くて小さいほど安くなります。",["送料はいくら","送料いくら","送料の目安","送料の相場"],8]);
+QA4.forEach(x=>QA.push(x));
 </script>
 <script>
 const INFO_DATE="2026年11月22日";
@@ -769,7 +824,7 @@ quiz:[
 <p>ざっくり<b>「売上の約15〜16%はeBayに引かれる」</b>と覚えておきましょう。</p>
 <h3>利益の出し方</h3>
 <div class="point">利益 ＝ 売上（円） − eBay手数料 − 為替の手数料 − 仕入れ値 − 実際の送料 − 関税など</div>
-<p>アメリカ向けは関税をセラーが先払いする方法（DDP）が必須になっています（段階9で説明）。その費用も計算に入れます。下の「利益計算」タブで実際に計算できます。</p>
+<p>アメリカ向けは関税をセラーが先払いする方法（DDP）が必須になっています（段階9で説明）。その費用も計算に入れます。「お金」タブの利益計算で実際に計算できます。</p>
 <div class="point">📌 まとめ<br>・落札手数料は多くのカテゴリーで13.6%<br>・手数料は送料を含めた売上総額にかかる<br>・海外決済手数料1.35%と1注文$0.30〜0.40も忘れずに<br>・目安：売上の約15〜16%がeBayの取り分</div>`,
 quiz:[
 ["売れたときにかかる中心の手数料は？",["落札手数料（FVF）","出品手数料","ストア月額","広告費"],0,"Final Value Fee（FVF）が手数料の中心です。"],
@@ -822,12 +877,15 @@ function setNav(){document.querySelectorAll("nav a").forEach(a=>a.classList.togg
 document.querySelectorAll("nav a").forEach(a=>a.onclick=e=>{e.preventDefault();tab=a.dataset.tab;render()});
 
 function render(){setNav();window.scrollTo(0,0);
- if(tab==="learn")renderList();else if(tab==="calc")renderCalc();else if(tab==="qa")renderQA();else if(tab==="tpl")renderTpl();else renderRecord();}
+ if(tab==="learn")renderList();else if(tab==="calc")renderCalc();else if(tab==="qa")renderQA();else if(tab==="tpl")renderTpl();else if(tab==="game")renderGame();else renderRecord();}
 
 function renderList(){
  const n=Object.keys(mem.passed).length;
  let h=`<div class="card"><b>学習の進み具合</b>　${n} / 13 段階 合格<div class="bar"><div style="width:${n/13*100}%"></div></div>
  <div class="date">各段階のテストで${QN}問中${PASS}問以上正解すると、次の段階が開きます。</div></div>`;
+ const fn=FIRST.filter((_,i)=>firstDone(i)).length;
+ h+=`<div class="stage" id="fs"><div class="num" style="background:#e8a317">🚀</div><div><div class="t">最初の1品ガイド</div><div class="s">${fn} / ${FIRST.length} ステップ完了（実際に作業しながら進める）</div></div></div>`;
+ h+=`<div class="stage" id="gn"><div class="num" style="background:#6a4c93">📚</div><div><div class="t">ジャンル別のコツ</div><div class="s">カメラ・トレカ・時計・ゲームなど${GENRES.length}ジャンル</div></div></div>`;
  h+=`<div class="stage" id="jp"><div class="num" style="background:#c62828">🇯🇵</div><div><div class="t">日本から販売するのに必要なこと</div><div class="s">いつでも読めます（準備・許可・税関・証明書類）</div></div></div>`;
  STAGES.forEach(st=>{
   const p=mem.passed[st.id],u=unlocked(st);
@@ -837,9 +895,12 @@ function renderList(){
  });
  const allOk=n>=13, ft=mem.final;
  h+=`<div class="card"><b>🏆 総合テスト</b>（全段階から20問・16問以上で合格）<div class="date">${ft?`合格 ${ft.score}/20（${ft.date}）`:allOk?"挑戦できます":"🔒 全13段階に合格すると開きます"}</div>${allOk?'<button id="final">総合テストを受ける</button>':""}</div>`;
+ h+=`<button class="sub" id="rec">🏅 合格の記録・このアプリについて</button>`;
  app.innerHTML=h;
+ document.getElementById("rec").onclick=()=>{renderRecord();window.scrollTo(0,0)};
  if(allOk)document.getElementById("final").onclick=startFinal;
  document.getElementById("jp").onclick=renderGuide;
+ document.getElementById("fs").onclick=renderFirst;document.getElementById("gn").onclick=renderGenres;
  app.querySelectorAll(".stage[data-id]").forEach(el=>el.onclick=()=>{
   const st=STAGES.find(s=>s.id==el.dataset.id);
   if(!unlocked(st)){alertBox("前の段階のテストに合格すると開きます。");return}
@@ -907,11 +968,11 @@ function expand(q){let t=norm(q);SYN.forEach(g=>{if(g.some(w=>t.includes(norm(w)
 function searchQA(q){
  const t0=norm(q),t=expand(q);if(!t)return[];
  const res=[];
- QA.forEach(x=>{let sc=0;x[2].forEach(k=>{const n=norm(k);if(t0.includes(n))sc+=2;else if(t.includes(n))sc+=1});if(norm(x[0]).includes(norm(q)))sc+=3;if(sc)res.push({type:"qa",sc,x})});
- GLOSSARY.forEach(g=>{const w=g[0].split(/[（）\/ ]/).map(norm).filter(v=>v.length>1);if(w.some(v=>t.includes(v)))res.push({type:"g",sc:2.5,x:g})});
+ QA.forEach(x=>{let sc=0;x[2].forEach(k=>{const n=norm(k);if(t0.includes(n))sc+=2;else if(t.includes(n))sc+=1});if(t0.length>=4&&norm(x[0]).includes(t0))sc+=3;if(sc)res.push({type:"qa",sc,x})});
+ GLOSSARY.forEach(g=>{const w=g[0].split(/[（）\/ ]/).map(norm).filter(v=>v.length>1&&v!=="ebay");if(w.some(v=>t0.includes(v)))res.push({type:"g",sc:1.5+Math.max(...w.map(v=>t0.includes(v)?v.length/10:0)),x:g})});
  return res.sort((a,b)=>b.sc-a.sc).slice(0,6);
 }
-function stageLink(id){if(id==0)return `<a href="#" class="go" data-id="0">→「日本から販売するのに必要なこと」を読む</a>`;const st=STAGES.find(s=>s.id==id);return `<a href="#" class="go" data-id="${id}">→ 段階${id}「${esc(st.title)}」を読む</a>`}
+function stageLink(id){if(id==-1)return `<a href="#" class="go" data-id="-1">→「最初の1品ガイド」を開く</a>`;if(id==0)return `<a href="#" class="go" data-id="0">→「日本から販売するのに必要なこと」を読む</a>`;const st=STAGES.find(s=>s.id==id);return `<a href="#" class="go" data-id="${id}">→ 段階${id}「${esc(st.title)}」を読む</a>`}
 function renderQA(q){
  q=q||"";
  let h=`<div class="card"><h2>質問コーナー</h2><p class="date">知りたいことを入力してください（例：送料にも手数料はかかる？／関税は誰が払う？）。ネットなしでも使えます。</p>
@@ -933,7 +994,7 @@ function showAns(q){
   :`<div class="card"><b>📖 ${esc(o.x[0])}</b><p>${esc(o.x[1])}</p>${stageLink(o.x[2])}</div>`).join("");
  bindGo(box);
 }
-function bindGo(el){el.querySelectorAll(".go").forEach(a=>a.onclick=e=>{e.preventDefault();if(a.dataset.id=="0"){renderGuide();return}const st=STAGES.find(s=>s.id==a.dataset.id);tab="learn";setNav();
+function bindGo(el){el.querySelectorAll(".go").forEach(a=>a.onclick=e=>{e.preventDefault();if(a.dataset.id=="0"){renderGuide();return}if(a.dataset.id=="-1"){tab="learn";setNav();renderFirst();return}const st=STAGES.find(s=>s.id==a.dataset.id);tab="learn";setNav();
  if(unlocked(st))renderStage(st);else{renderList();alertBox(`段階${st.id}は、前の段階に合格すると読めます。`)}})}
 function renderGlossary(){window.scrollTo(0,0);
  app.innerHTML=`<div class="card"><h2>用語集</h2><button class="sub" id="bk">質問コーナーに戻る</button></div>`+
@@ -971,61 +1032,743 @@ function renderCheck(id){window.scrollTo(0,0);
 }
 function fallbackCopy(t,done){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(e){}a.remove()}
 
-// ---------- 利益計算 ----------
+// ---------- お金（利益計算・仕入れ上限・記録帳） ----------
+let moneyTab="calc";
+const f0=n=>Math.round(n).toLocaleString("ja-JP");
+function feeCalc(v){
+ const total=v.price+v.ship, fvf=total*v.fvf/100, per=total>10?0.40:0.30, intl=total*0.0135;
+ const fee=fvf+per+intl, yenNet=(total-fee)*v.rate*(1-v.fx/100);
+ return {total,fvf,per,intl,fee,yenNet,salesYen:total*v.rate};
+}
+function dutyEst(mode,price,rate,eur){
+ if(mode==="us")return price*0.15*rate;
+ if(mode==="eu")return 5*eur;
+ return null;
+}
+const FVF_OPTS='<option value="13.6">13.6%（多くのカテゴリー）</option><option value="15.3">15.3%（本・映画・音楽）</option><option value="15">15%（時計・バッグなど一部）</option><option value="13.25">13.25%（一部カテゴリー）</option>';
+const DUTY_OPTS='<option value="manual">自分で入力</option><option value="us">アメリカ（商品価格の15%）</option><option value="eu">EU（関税3＋手数料2ユーロ）</option><option value="none">なし</option>';
+function moneyHead(){
+ return `<div class="seg">${[["calc","利益計算"],["rev","仕入れ上限"],["book","記録帳"]].map(x=>`<button class="${moneyTab===x[0]?"on":""}" data-m="${x[0]}">${x[1]}</button>`).join("")}</div>`;
+}
 function renderCalc(){
- const c=mem.calc||{price:50,ship:0,rate:150,fvf:13.6,cost:3000,realShip:2000,duty:0,fx:2};
- app.innerHTML=`<div class="card"><h2>利益計算機</h2><p class="date">手数料率は${INFO_DATE}時点の目安です。カテゴリーによって違うので、必要なら変えてください。</p>
+ if(moneyTab==="rev")return renderRev();
+ if(moneyTab==="book")return renderBook();
+ const c=Object.assign({price:50,ship:0,rate:150,fvf:13.6,cost:3000,realShip:2000,duty:0,fx:2,dmode:"us",eur:170},mem.calc||{});
+ app.innerHTML=moneyHead()+`<div class="card"><h2>利益計算</h2><p class="date">手数料率は${INFO_DATE}時点の目安です。</p>
  <label>販売価格（ドル）</label><input id="price" type="number" inputmode="decimal" value="${c.price}">
  <label>買い手が払う送料（ドル）　送料無料なら0</label><input id="ship" type="number" inputmode="decimal" value="${c.ship}">
  <label>為替レート（1ドル＝何円）</label><input id="rate" type="number" inputmode="decimal" value="${c.rate}">
- <label>落札手数料の率（%）</label><select id="fvf">
-  <option value="13.6">13.6%（多くのカテゴリー）</option><option value="15.3">15.3%（本・映画・音楽）</option><option value="15">15%（時計・バッグなど一部）</option><option value="13.25">13.25%（一部カテゴリー）</option></select>
+ <label>落札手数料の率</label><select id="fvf">${FVF_OPTS}</select>
  <label>仕入れ値（円）</label><input id="cost" type="number" inputmode="numeric" value="${c.cost}">
  <label>実際にかかる送料（円）</label><input id="realShip" type="number" inputmode="numeric" value="${c.realShip}">
- <label>関税・その他の費用（円）　米国向けDDPの関税など</label><input id="duty" type="number" inputmode="numeric" value="${c.duty}">
- <label>円に替えるときの手数料（%）　目安として入力</label><input id="fx" type="number" inputmode="decimal" value="${c.fx}">
- </div><div class="card res" id="out"></div>`;
- document.getElementById("fvf").value=String(c.fvf);
- const ids=["price","ship","rate","fvf","cost","realShip","duty","fx"];
- function calc(){
-  const v={};ids.forEach(k=>v[k]=parseFloat(document.getElementById(k).value)||0);
+ <label>関税の目安</label><select id="dmode">${DUTY_OPTS}</select>
+ <div id="eurBox"><label>ユーロのレート（1ユーロ＝何円）</label><input id="eur" type="number" inputmode="decimal" value="${c.eur}"></div>
+ <label>関税・その他の費用（円）</label><input id="duty" type="number" inputmode="numeric" value="${c.duty}">
+ <label>円に替えるときの手数料（%）</label><input id="fx" type="number" inputmode="decimal" value="${c.fx}">
+ <p class="date">${DUTY_INFO}</p></div><div class="card res" id="out"></div><button class="sub" id="toBook">この内容で記録帳に入れる（売れたとき）</button>`;
+ bindSeg();
+ document.getElementById("toBook").onclick=()=>{mem.draft=Object.assign({},mem.calc);moneyTab="book";renderCalc()};
+ document.getElementById("fvf").value=String(c.fvf);document.getElementById("dmode").value=c.dmode;
+ const ids=["price","ship","rate","fvf","cost","realShip","duty","fx","eur"];
+ function calc(ev){
+  if(ev&&ev.target&&ev.target.id==="duty")document.getElementById("dmode").value="manual";
+  const v={};ids.forEach(k=>v[k]=parseFloat(document.getElementById(k).value)||0);v.dmode=document.getElementById("dmode").value;
+  document.getElementById("eurBox").style.display=v.dmode==="eu"?"":"none";
+  const est=dutyEst(v.dmode,v.price,v.rate,v.eur);
+  if(est!==null){v.duty=Math.round(est);document.getElementById("duty").value=v.duty}
+  if(v.dmode==="none"){v.duty=0;document.getElementById("duty").value=0}
   mem.calc=v;save();
-  const total=v.price+v.ship;
-  const fvf=total*v.fvf/100, per=total>10?0.40:0.30, intl=total*0.0135;
-  const fee=fvf+per+intl, net=total-fee;
-  const yenNet=net*v.rate*(1-v.fx/100);
-  const profit=yenNet-v.cost-v.realShip-v.duty;
-  const salesYen=total*v.rate, rateP=salesYen?profit/salesYen*100:0;
-  const f=n=>Math.round(n).toLocaleString("ja-JP");
-  document.getElementById("out").innerHTML=`
-  <div>利益</div><div class="big ${profit>=0?"plus":"minus"}">${f(profit)} 円</div><div>利益率（売上に対して）：${rateP.toFixed(1)}%</div>
-  <table><tr><td>売上総額</td><td>$${total.toFixed(2)}（約${f(salesYen)}円）</td></tr>
-  <tr><td>落札手数料 ${v.fvf}%</td><td>−$${fvf.toFixed(2)}</td></tr>
-  <tr><td>1注文の手数料</td><td>−$${per.toFixed(2)}</td></tr>
-  <tr><td>海外決済手数料 1.35%</td><td>−$${intl.toFixed(2)}</td></tr>
-  <tr><th>eBay手数料の合計</th><th>−$${fee.toFixed(2)}（${total?(fee/total*100).toFixed(1):0}%）</th></tr>
-  <tr><td>円での受取額（為替手数料後）</td><td>${f(yenNet)}円</td></tr>
-  <tr><td>仕入れ値</td><td>−${f(v.cost)}円</td></tr>
-  <tr><td>実際の送料</td><td>−${f(v.realShip)}円</td></tr>
-  <tr><td>関税・その他</td><td>−${f(v.duty)}円</td></tr></table>
-  ${profit<0?'<div class="warn">赤字です。販売価格を上げるか、仕入れ値・送料を見直しましょう。</div>':""}`;
+  const r=feeCalc(v), profit=r.yenNet-v.cost-v.realShip-v.duty, rp=r.salesYen?profit/r.salesYen*100:0;
+  document.getElementById("out").innerHTML=`<div>利益</div><div class="big ${profit>=0?"plus":"minus"}">${f0(profit)} 円</div><div>利益率（売上に対して）：${rp.toFixed(1)}%</div>
+  <table><tr><td>売上総額</td><td>$${r.total.toFixed(2)}（約${f0(r.salesYen)}円）</td></tr>
+  <tr><td>落札手数料 ${v.fvf}%</td><td>−$${r.fvf.toFixed(2)}</td></tr><tr><td>1注文の手数料</td><td>−$${r.per.toFixed(2)}</td></tr>
+  <tr><td>海外決済手数料 1.35%</td><td>−$${r.intl.toFixed(2)}</td></tr>
+  <tr><th>eBay手数料の合計</th><th>−$${r.fee.toFixed(2)}（${r.total?(r.fee/r.total*100).toFixed(1):0}%）</th></tr>
+  <tr><td>円での受取額</td><td>${f0(r.yenNet)}円</td></tr><tr><td>仕入れ値</td><td>−${f0(v.cost)}円</td></tr>
+  <tr><td>実際の送料</td><td>−${f0(v.realShip)}円</td></tr><tr><td>関税・その他</td><td>−${f0(v.duty)}円</td></tr></table>
+  ${profit<0?'<div class="warn">赤字です。販売価格を上げるか、仕入れ値・送料を見直しましょう。</div>':""}
+`;
  }
- ids.forEach(k=>document.getElementById(k).addEventListener("input",calc));
+ ids.concat(["dmode"]).forEach(k=>{document.getElementById(k).addEventListener("input",calc);document.getElementById(k).addEventListener("change",calc)});
  calc();
+}
+function bindSeg(){app.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{moneyTab=b.dataset.m;renderCalc()})}
+
+function renderRev(){
+ const c=Object.assign({price:50,ship:0,rate:150,fvf:13.6,realShip:2000,fx:2,dmode:"us",eur:170,tmode:"rate",target:20},mem.rev||{});
+ app.innerHTML=moneyHead()+`<div class="card"><h2>仕入れ上限の計算</h2><p class="date">売れる値段（Soldの相場）から、仕入れてよい上限を出します。</p>
+ <label>売れる値段（ドル）</label><input id="price" type="number" inputmode="decimal" value="${c.price}">
+ <label>買い手が払う送料（ドル）</label><input id="ship" type="number" inputmode="decimal" value="${c.ship}">
+ <label>為替レート（1ドル＝何円）</label><input id="rate" type="number" inputmode="decimal" value="${c.rate}">
+ <label>落札手数料の率</label><select id="fvf">${FVF_OPTS}</select>
+ <label>実際にかかる送料（円）</label><input id="realShip" type="number" inputmode="numeric" value="${c.realShip}">
+ <label>関税の目安</label><select id="dmode">${DUTY_OPTS.replace('<option value="manual">自分で入力</option>','')}</select>
+ <div id="eurBox"><label>ユーロのレート（1ユーロ＝何円）</label><input id="eur" type="number" inputmode="decimal" value="${c.eur}"></div>
+ <label>円に替えるときの手数料（%）</label><input id="fx" type="number" inputmode="decimal" value="${c.fx}">
+ <label>ほしい利益の決め方</label><select id="tmode"><option value="rate">売上に対する利益率（%）</option><option value="yen">利益の金額（円）</option></select>
+ <label id="tl">ほしい利益</label><input id="target" type="number" inputmode="decimal" value="${c.target}"></div><div class="card res" id="out"></div>`;
+ bindSeg();
+ document.getElementById("fvf").value=String(c.fvf);document.getElementById("dmode").value=c.dmode;document.getElementById("tmode").value=c.tmode;
+ const ids=["price","ship","rate","fvf","realShip","fx","eur","target"];
+ function calc(){
+  const v={};ids.forEach(k=>v[k]=parseFloat(document.getElementById(k).value)||0);v.dmode=document.getElementById("dmode").value;v.tmode=document.getElementById("tmode").value;
+  document.getElementById("eurBox").style.display=v.dmode==="eu"?"":"none";
+  document.getElementById("tl").textContent=v.tmode==="rate"?"ほしい利益率（%）":"ほしい利益（円）";
+  mem.rev=v;save();
+  const r=feeCalc(v), duty=dutyEst(v.dmode,v.price,v.rate,v.eur)||0;
+  const want=v.tmode==="rate"?r.salesYen*v.target/100:v.target;
+  const max=r.yenNet-v.realShip-duty-want;
+  document.getElementById("out").innerHTML=`<div>仕入れてよい上限</div><div class="big ${max>0?"plus":"minus"}">${max>0?f0(max)+" 円まで":"仕入れると赤字"}</div>
+  <table><tr><td>円での受取額（手数料後）</td><td>${f0(r.yenNet)}円</td></tr><tr><td>実際の送料</td><td>−${f0(v.realShip)}円</td></tr>
+  <tr><td>関税の目安</td><td>−${f0(duty)}円</td></tr><tr><td>ほしい利益</td><td>−${f0(want)}円</td></tr></table>
+  ${max<=0?'<div class="warn">この値段では、ほしい利益が出ません。もっと高く売れる物を探すか、送料を見直しましょう。</div>':""}`;
+ }
+ ids.concat(["dmode","tmode"]).forEach(k=>{document.getElementById(k).addEventListener("input",calc);document.getElementById(k).addEventListener("change",calc)});
+ calc();
+}
+
+function renderBook(){
+ mem.book=mem.book||[];
+ const d=mem.draft||{};const t=new Date();const ds=`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;
+ let h=moneyHead()+`<div class="card"><h2>記録帳に追加</h2>
+ <label>売れた日</label><input id="bd" type="date" value="${ds}">
+ <label>商品名</label><input id="bn" placeholder="例：Canon AE-1">
+ <label>販売価格（ドル）</label><input id="bp" type="number" inputmode="decimal" value="${d.price??""}">
+ <label>買い手が払った送料（ドル）</label><input id="bs" type="number" inputmode="decimal" value="${d.ship??0}">
+ <label>為替レート（1ドル＝何円）</label><input id="br" type="number" inputmode="decimal" value="${d.rate??150}">
+ <label>落札手数料の率</label><select id="bf">${FVF_OPTS}</select>
+ <label>仕入れ値（円）</label><input id="bc" type="number" inputmode="numeric" value="${d.cost??""}">
+ <label>実際の送料（円）</label><input id="bx" type="number" inputmode="numeric" value="${d.realShip??""}">
+ <label>関税・その他（円）</label><input id="bu" type="number" inputmode="numeric" value="${d.duty??0}">
+ <label>円に替えるときの手数料（%）</label><input id="bfx" type="number" inputmode="decimal" value="${d.fx??2}">
+ <button id="add">記録する</button></div>`;
+ // 月別集計
+ const months={};mem.book.forEach((r,i)=>{const m=r.date.slice(0,7);(months[m]=months[m]||[]).push(Object.assign({i},r))});
+ const keys=Object.keys(months).sort().reverse();
+ const all=mem.book.reduce((a,r)=>({n:a.n+1,s:a.s+r.salesYen,p:a.p+r.profit}),{n:0,s:0,p:0});
+ h+=`<div class="card"><h2>集計</h2><div>合計 ${all.n}件　売上 約${f0(all.s)}円　利益 <b class="${all.p>=0?"plus":"minus"}">${f0(all.p)}円</b></div>`;
+ if(!keys.length)h+=`<p class="date">まだ記録がありません。</p>`;
+ keys.forEach(m=>{const L=months[m];const s=L.reduce((a,r)=>a+r.salesYen,0),p=L.reduce((a,r)=>a+r.profit,0);
+  h+=`<h3>${m.replace("-","年")}月　${L.length}件</h3><div>売上 約${f0(s)}円　利益 <b class="${p>=0?"plus":"minus"}">${f0(p)}円</b></div>
+  <table><tr><th>日付</th><th>商品</th><th>利益</th><th></th></tr>${L.map(r=>`<tr><td>${r.date.slice(5)}</td><td>${esc(r.name)}</td><td class="${r.profit>=0?"plus":"minus"}">${f0(r.profit)}</td><td><a href="#" class="del" data-i="${r.i}">削除</a></td></tr>`).join("")}</table>`});
+ h+=`</div><div class="card"><h2>バックアップ</h2><p class="date">記録はこのiPhoneのブラウザの中だけに保存されます。消えないように、ときどきバックアップをコピーしてメモアプリなどに貼り付けて保管してください。</p>
+ <button class="sub" id="csv">表の形でコピー（Excel・Numbers用）</button><button class="sub" id="bk">バックアップをコピー</button>
+ <label>バックアップから戻す（コピーした文字を貼り付け）</label><textarea id="rt" rows="3" style="width:100%;font-size:16px;border:1px solid var(--line);border-radius:10px;padding:8px"></textarea><button class="sub" id="rs">戻す</button><div id="msg" class="date"></div></div>`;
+ app.innerHTML=h;bindSeg();
+ document.getElementById("bf").value=String(d.fvf??13.6);
+ document.getElementById("add").onclick=()=>{
+  const g=id=>parseFloat(document.getElementById(id).value)||0;
+  const v={price:g("bp"),ship:g("bs"),rate:g("br"),fvf:parseFloat(document.getElementById("bf").value),fx:g("bfx")};
+  const name=document.getElementById("bn").value.trim()||"（名前なし）";
+  if(!v.price){document.getElementById("bp").focus();alertBox("販売価格を入れてください。");return}
+  const r=feeCalc(v),cost=g("bc"),rs=g("bx"),du=g("bu");
+  mem.book.push({date:document.getElementById("bd").value||ds,name,price:v.price,ship:v.ship,rate:v.rate,fvf:v.fvf,fx:v.fx,cost,realShip:rs,duty:du,feeUsd:+r.fee.toFixed(2),salesYen:Math.round(r.salesYen),profit:Math.round(r.yenNet-cost-rs-du)});
+  mem.draft=null;save();alertBox("記録しました。");renderBook();
+ };
+ app.querySelectorAll(".del").forEach(a=>a.onclick=e=>{e.preventDefault();
+  if(a.dataset.c){mem.book.splice(+a.dataset.i,1);save();renderBook()}else{a.dataset.c="1";a.textContent="本当に消す";a.style.color="#c62828"}});
+ const msg=t=>document.getElementById("msg").textContent=t;
+ const copy=(t,ok)=>{try{navigator.clipboard.writeText(t).then(()=>msg(ok),()=>fallbackCopy(t,()=>msg(ok)))}catch(e){fallbackCopy(t,()=>msg(ok))}};
+ document.getElementById("csv").onclick=()=>{
+  const head="日付\t商品名\t販売価格(ドル)\t送料(ドル)\tレート\teBay手数料(ドル)\t売上(円)\t仕入れ値\t実送料\t関税他\t利益";
+  copy([head].concat(mem.book.map(r=>[r.date,r.name,r.price,r.ship,r.rate,r.feeUsd,r.salesYen,r.cost,r.realShip,r.duty,r.profit].join("\t"))).join("\n"),"コピーしました。Excel・Numbersに貼り付けられます。")};
+ document.getElementById("bk").onclick=()=>copy(JSON.stringify({app:"ebay-master",book:mem.book}),"バックアップをコピーしました。メモアプリなどに貼り付けて保管してください。");
+ document.getElementById("rs").onclick=()=>{try{const o=JSON.parse(document.getElementById("rt").value);if(!o||!Array.isArray(o.book))throw 0;mem.book=o.book;save();renderBook();alertBox(`${o.book.length}件を戻しました。`)}catch(e){msg("読み込めませんでした。コピーした文字をそのまま貼り付けてください。")}};
+}
+
+// ---------- 最初の1品ガイド ----------
+function firstDone(i){const s=(mem.first||{})[i]||{};return FIRST[i].tasks.every((_,j)=>s[j])}
+function renderFirst(){window.scrollTo(0,0);
+ const n=FIRST.filter((_,i)=>firstDone(i)).length;
+ app.innerHTML=`<div class="card"><h2>🚀 最初の1品ガイド</h2><p>実際に作業しながら、1つずつ進めます。全部の作業にチェックすると、そのステップが完了になります。</p><div class="bar"><div style="width:${n/FIRST.length*100}%"></div></div><div class="date">${n} / ${FIRST.length} ステップ完了${n===FIRST.length?"　🎉 最初の1品、達成です！":""}</div></div>`+
+ FIRST.map((s,i)=>`<div class="stage ${firstDone(i)?"passed":""}" data-f="${i}"><div class="num">${firstDone(i)?"✓":i+1}</div><div><div class="t">${esc(s.t)}</div></div></div>`).join("")+`<button class="sub" id="back">一覧に戻る</button>`;
+ app.querySelectorAll("[data-f]").forEach(el=>el.onclick=()=>renderFirstStep(+el.dataset.f));
+ document.getElementById("back").onclick=renderList;
+}
+function renderFirstStep(i){window.scrollTo(0,0);
+ mem.first=mem.first||{};mem.first[i]=mem.first[i]||{};const s=FIRST[i],st=mem.first[i];
+ function draw(){
+  app.innerHTML=`<div class="card"><div class="qhead">ステップ ${i+1} / ${FIRST.length}</div><h2>${esc(s.t)}</h2><p>${esc(s.d)}</p>${stageLink(s.link)}</div>
+  <div class="card"><b>やること</b>${s.tasks.map((t,j)=>`<label class="chk"><input type="checkbox" data-j="${j}" ${st[j]?"checked":""}> ${esc(t)}</label>`).join("")}</div>
+  ${firstDone(i)?'<div class="point">✅ このステップは完了です！</div>':""}
+  ${i<FIRST.length-1?'<button id="nx">次のステップへ</button>':""}${i>0?'<button class="sub" id="pv">前のステップ</button>':""}<button class="sub" id="ls">ステップ一覧</button>`;
+  app.querySelectorAll(".chk input").forEach(x=>x.onchange=()=>{st[x.dataset.j]=x.checked;save();draw()});
+  const nx=document.getElementById("nx");if(nx)nx.onclick=()=>renderFirstStep(i+1);
+  const pv=document.getElementById("pv");if(pv)pv.onclick=()=>renderFirstStep(i-1);
+  document.getElementById("ls").onclick=renderFirst;
+  bindGo(app);
+ }
+ draw();
+}
+
+// ---------- ジャンル別のコツ ----------
+function renderGenres(){window.scrollTo(0,0);
+ app.innerHTML=`<div class="card"><h2>📚 ジャンル別のコツ</h2><p class="date">見たいジャンルを押すと開きます。英語の表現は説明文にそのまま使えます。</p></div>`+
+ GENRES.map((g,i)=>`<details class="card"><summary><b>${g.n}</b></summary>
+ <h3>売れやすい物</h3><p>${esc(g.sell)}</p><h3>写真のポイント</h3><p>${esc(g.photo)}</p><h3>説明文のポイント</h3><p>${esc(g.desc)}</p>
+ <h3>使える英語</h3><table>${g.en.map(e=>`<tr><td style="font-family:Georgia,serif">${esc(e[0])}</td><td>${esc(e[1])}</td></tr>`).join("")}</table>
+ <button class="sub gcp" data-i="${i}">英語の表現をまとめてコピー</button>
+ <div class="warn">⚠️ ${esc(g.warn)}</div></details>`).join("")+`<button class="sub" id="back">一覧に戻る</button>`;
+ app.querySelectorAll(".gcp").forEach(b=>b.onclick=()=>{const t=GENRES[b.dataset.i].en.map(e=>e[0]).join("\n");const done=()=>b.textContent="コピーしました ✓";
+  try{navigator.clipboard.writeText(t).then(done,()=>fallbackCopy(t,done))}catch(e){fallbackCopy(t,done)}});
+ document.getElementById("back").onclick=renderList;
 }
 
 // ---------- 記録 ----------
 function renderRecord(){
  let h=`<div class="card"><h2>合格の記録</h2><table><tr><th>段階</th><th>点数</th><th>合格日</th></tr>`;
  STAGES.forEach(st=>{const p=mem.passed[st.id];h+=`<tr><td>${st.id}. ${esc(st.title)}</td><td>${p?p.score+"/"+QN:"−"}</td><td>${p?p.date:"−"}</td></tr>`});
- h+=`<tr><td>🏆 総合テスト</td><td>${mem.final?mem.final.score+"/20":"−"}</td><td>${mem.final?mem.final.date:"−"}</td></tr></table></div><div class="card"><b>このアプリについて</b><p>eBay販売マスター by Urushihara v1.3<br>情報確認日：${INFO_DATE}<br>手数料やルールは変わることがあります。実際の販売前にeBay公式（セラーポータル）で確認してください。</p>
- <button class="sub" id="reset">記録をすべて消す</button></div>`;
+ h+=`<tr><td>🏆 総合テスト</td><td>${mem.final?mem.final.score+"/20":"−"}</td><td>${mem.final?mem.final.date:"−"}</td></tr></table></div><div class="card"><b>このアプリについて</b><p>eBay販売マスター by Urushihara v3.2<br>情報確認日：${INFO_DATE}<br>手数料やルールは変わることがあります。実際の販売前にeBay公式（セラーポータル）で確認してください。</p>
+ <button class="sub" id="reset">テストの合格記録と1品ガイドの進み具合を消す（記録帳とゲームは残ります）</button><button class="sub" id="rback">一覧に戻る</button></div>`;
  app.innerHTML=h;
+ document.getElementById("rback").onclick=()=>{tab="learn";render()};
  document.getElementById("reset").onclick=()=>{
   const b=document.getElementById("reset");
-  if(b.dataset.c){mem={passed:{}};save();renderRecord();}else{b.dataset.c="1";b.textContent="本当に消す場合は、もう一度押してください";b.style.background="#c62828";b.style.color="#fff";}
+  if(b.dataset.c){mem.passed={};mem.final=null;mem.first={};save();renderRecord();}else{b.dataset.c="1";b.textContent="本当に消す場合は、もう一度押してください";b.style.background="#c62828";b.style.color="#fff";}
  };
 }
+// ===================== ゲーム「eBayセラー物語」 G3 =====================
+// ---- ドット絵 ----
+const PAL={K:"#1b1b2f",R:"#c0392b",S:"#f5c9a0",B:"#2e6fd8",W:"#ffffff",L:"#3b3b58",M:"#b5543a",Y:"#f2c230",O:"#e67e22",G:"#2e8b57",H:"#8e5b3a",P:"#d6a2e8",A:"#7f8c8d",C:"#bfe3ff",N:"#5a3a22",E:"#4caf50",V:"#6c3483"};
+const SPR={
+hero:["....KKKKKK......","...KRRRRRRK.....","..KRRRRRRRRK....","..KKKKKKKKKKK...","..KSSSSSSSK.....","..KSKSSKSSK.....","..KSSSSSSSK.....","...KSSMSSK......","....KKKKK.......","...KBBBBBK......","..KBBWBBBBK.....","..KSBBBBBSK.....","...KBBBBBK......","...KLLKLLK......","...KLLKLLK......","...KKK.KKK......"],
+shop:["....KKKKKK......","...KHHHHHHK.....","..KHHHHHHHHK....","..KSSSSSSSSK....","..KSKSSSKSSK....","..KSSSSSSSSK....","...KSSMMSSK.....","....KKKKKK......","...KGGGGGGK.....","..KGWWWWWWGK....","..KSWWWWWWSK....","...KWWWWWWK.....","...KWWWWWWK.....","...KLLKKLLK.....","...KLLK.KLLK....","...KKK..KKK....."],
+buyer:["....KKKKKK......","...KYYYYYYK.....","..KYYYYYYYYK....","..KYSSSSSSYK....","..KSSKSSKSSK....","..KSSSSSSSSK....","...KSSMMSSK.....","....KKKKKK......","...KEEEEEEK.....","..KEEEEEEEEK....","..KSEEEEEESK....","...KEEEEEEK.....","...KBBBBBBK.....","...KBBKKBBK.....","...KBBK.KBBK....","...KKK..KKK....."],
+box:["................","................","................","................","..KKKKKKKKKKKK..","..KOOOOYYOOOOK..","..KOOOOYYOOOOK..","..KKKKKKKKKKKK..","..KOOOOYYOOOOK..","..KOOOOYYOOOOK..","..KOOOOYYOOOOK..","..KOOOOYYOOOOK..","..KOOOOYYOOOOK..","..KKKKKKKKKKKK..","................","................"],
+ghost:["................",".....KKKKKK.....","....KWWWWWWK....","...KWWWWWWWWK...","...KWKKWWKKWK...","...KWKKWWKKWK...","...KWWWWWWWWK...","...KWWWKKWWWK...","...KWWWWWWWWK...","...KWWWWWWWWK...","...KWWWWWWWWK...","...KWKWWKWWKWK..","...KK.KK.KK.KK..","................","................","................"],
+coin:["................","................",".....KKKKKK.....","....KYYYYYYK....","...KYYWYYYYYK...","...KYWYKKYYYK...","...KYYYKYYYYK...","...KYYKKKYYYK...","...KYYYKYYYYK...","...KYYKKKYYYK...","...KYYYYYYYYK...","....KYYYYYYK....",".....KKKKKK.....","................","................","................"],
+police:["....KKKKKK......","...KBBBBBBK.....","..KBBBYYBBBK....","..KKKKKKKKKK....","..KSSSSSSSSK....","..KSKSSSKSSK....","..KSSSSSSSSK....","...KSSMMSSK.....","....KKKKKK......","...KBBBBBBK.....","..KBBYBBBBBK....","..KSBBBBBBSK....","...KBBBBBBK.....","...KLLKKLLK.....","...KLLK.KLLK....","...KKK..KKK....."]
+};
+function drawSprite(ctx,name,x,y,flip){const s=SPR[name];for(let r=0;r<16;r++)for(let c=0;c<16;c++){const ch=s[r][flip?15-c:c];if(ch!=="."){ctx.fillStyle=PAL[ch];ctx.fillRect(x+c,y+r,1,1)}}}
+function drawBg(ctx,bg){
+ const R=(c,x,y,w,h)=>{ctx.fillStyle=c;ctx.fillRect(x,y,w,h)};
+ if(bg==="room"){R("#e9d8b4",0,0,160,64);R("#b07a4a",0,64,160,32);for(let x=0;x<160;x+=16)R("#9c6a3e",x,64,1,32);R("#7fb7e6",16,12,34,26);R("#fff",32,12,2,26);R("#fff",16,24,34,2);R("#6b4a2b",100,30,44,34);R("#8a6440",102,32,40,14);R("#8a6440",102,48,40,14)}
+ else if(bg==="shop"||bg==="recycle"||bg==="antique"){const base=bg==="shop"?"#f3e6c8":bg==="recycle"?"#e3efe0":"#efe2d0";R(base,0,0,160,64);R(bg==="antique"?"#8a6a4a":"#c9a26b",0,64,160,32);
+  const cols=bg==="antique"?["#8e5b3a","#2e8b57","#b5543a","#7f8c8d","#c0392b"]:["#e74c3c","#3498db","#f1c40f","#2ecc71","#9b59b6"];
+  for(let y=10;y<60;y+=16){R("#7a5230",8,y+12,144,3);for(let x=12;x<150;x+=12)R(cols[(x+y)%5],x,y+2,8,10)}R(bg==="recycle"?"#27ae60":bg==="antique"?"#6b4a2b":"#c0392b",50,0,60,8)}
+ else if(bg==="flea"){R("#dfe9f2",0,0,160,96);R("#ffffff",40,10,80,76);R("#1b1b2f",40,10,80,6);for(let y=20;y<80;y+=16){R("#e74c3c",46,y,12,12);R("#7f8c8d",62,y+2,50,3);R("#bdc3c7",62,y+7,36,3)}}
+ else if(bg==="post"){R("#dfe9f2",0,0,160,64);R("#9aa7b4",0,64,160,32);R("#c0392b",0,0,160,10);ctx.fillStyle="#fff";ctx.font="8px sans-serif";ctx.fillText("〒 SHIPPING",52,8);R("#7a5230",0,52,160,12);R("#a0703f",0,50,160,3)}
+ else if(bg==="night"){R("#1d2550",0,0,160,64);for(let i=0;i<24;i++)R("#fff",(i*37)%160,(i*23)%56,1,1);ctx.fillStyle="#f7e27a";ctx.beginPath();ctx.arc(134,16,7,0,7);ctx.fill();ctx.fillStyle="#1d2550";ctx.beginPath();ctx.arc(138,13,6,0,7);ctx.fill();R("#2c2c3a",0,64,160,32);for(let x=4;x<160;x+=22){R("#3d3d55",x,40,16,24);R("#f7e27a",x+4,46,3,3);R("#f7e27a",x+9,52,3,3)}}
+ else if(bg==="office"){R("#dde4ea",0,0,160,64);R("#7f8c8d",0,64,160,32);R("#2c3e50",20,14,50,30);R("#27ae60",24,18,42,22);R("#5a3a22",90,40,60,6);R("#5a3a22",94,46,4,18);R("#5a3a22",142,46,4,18)}
+ else if(bg==="police"){R("#e8eef5",0,0,160,64);R("#95a5a6",0,64,160,32);R("#2c3e50",0,0,160,12);ctx.fillStyle="#fff";ctx.font="8px sans-serif";ctx.fillText("警察署",66,9);R("#7a5230",0,52,160,12)}
+ else if(bg==="trouble"){R("#3b1d3f",0,0,160,96);for(let i=0;i<30;i++)R("#6c3483",(i*53)%160,(i*29)%96,2,2)}
+ else if(bg==="happy"){R("#fff3c4",0,0,160,96);for(let i=0;i<30;i++)R(["#f1c40f","#e67e22","#2ecc71"][i%3],(i*41)%160,(i*17)%96,2,2)}
+}
+let gAnim=null;
+function scene(bg,chars){
+ const cv=document.getElementById("gcv");if(!cv)return;const ctx=cv.getContext("2d");ctx.imageSmoothingEnabled=false;
+ if(gAnim)clearInterval(gAnim);let t=0;
+ const draw=()=>{ctx.clearRect(0,0,160,96);drawBg(ctx,bg);chars.forEach((c,i)=>drawSprite(ctx,c[0],c[1],c[2]+((t+i)%2&&c[3]!=="still"?-1:0),c[4]))};
+ draw();gAnim=setInterval(()=>{if(!document.getElementById("gcv")){clearInterval(gAnim);return}t++;draw()},500);
+}
+
+// ---- 商品データ ----
+// key:[名前, 絵, 仕入れ値目安(円), 相場(ドル), 重さ(g), 中古, 傷あり, 特別(fake/cites/fragile)]
+const GITEMS={
+ cam:["古いフィルムカメラ","📷",0,85,700,1,1,"fragile"],soft:["ゲームソフト（日本版・中古）","🎮",0,30,150,1,0],kimono:["着物（中古）","🎌",0,60,900,1,1],
+ seiko:["古い国産腕時計","⌚",0,120,200,1,1],card:["ポケモンカード（数枚）","🃏",0,25,50,1,0],
+ fig:["日本限定フィギュア","🧸",4800,80,600,0,0,"fragile"],box:["ポケカ未開封BOX","🃏",5400,90,500,0,0],gun:["日本限定プラモデル","🧸",3300,55,700,0,0],
+ gnew:["日本版ゲーム（新品）","🎮",6500,85,200,0,0],watch:["国内モデル腕時計","⌚",22000,240,400,0,0],sensu:["和柄の扇子","🎌",1500,20,100,0,0],
+ head:["日本限定ヘッドホン","🎵",15000,165,600,0,0],pen:["日本限定の文房具セット","✏️",1200,25,150,0,0],
+ camF:["フィルム一眼レフ（中古）","📷",9000,135,900,1,0,"fragile"],lens:["オールドレンズ（中古）","📷",7000,105,400,1,0,"fragile"],
+ gboy:["レトロゲーム機（中古）","🎮",5500,80,400,1,0],pot:["日本の陶器（作者不明）","🏺",2500,48,800,1,0,"fragile"],
+ amp:["国産アンプ（100V・中古）","🎵",9000,175,5500,1,0],tcg:["人気トレカ単品（美品）","🃏",8500,130,30,1,0],
+ brandW:["ブランド腕時計（中古）","⌚",28000,380,200,1,0,"fake"],netsuke:["象牙の根付（古い物）","🏺",12000,250,50,1,0,"cites"],
+ obi:["帯（中古）","🎌",1800,40,600,1,0],tea:["茶道具（中古）","🏺",3500,62,700,1,0,"fragile"]
+};
+const GENRE_OF={"📷":"camera","🎮":"game","🎌":"wa","⌚":"watch","🃏":"card","🧸":"toy","🎵":"audio","✏️":"stationery","🏺":"antique"};
+const HOME_ITEMS=["cam","soft","kimono","seiko","card"];
+const SHOPS={
+ mass:{n:"量販店",d:"新品・日本限定品",bg:"shop",lic:0,items:["fig","box","gun","gnew","watch","sensu","head","pen"],pr:[0.8,1.15]},
+ recycle:{n:"リサイクルショップ",d:"中古品。実物を確かめて買える",bg:"recycle",lic:1,items:["camF","lens","gboy","amp","kimono","seiko","soft","pot"],pr:[0.75,1.1]},
+ flea:{n:"フリマアプリ",d:"中古品。種類が多いが写真だけで判断",bg:"flea",lic:1,items:["tcg","brandW","lens","gboy","card","camF","obi"],pr:[0.7,1.05]},
+ antique:{n:"骨董市",d:"古い和の品。掘り出し物と危ない物がある",bg:"antique",lic:1,items:["pot","tea","netsuke","obi","kimono","sensu","seiko"],pr:[0.7,1.1]},
+ whole:{n:"メーカー直取引",d:"新品を5個まとめて安く仕入れる（ストア限定）",bg:"office",lic:0,store:1,items:["fig","box","gun","gnew","head","pen","watch"],pr:[0.62,0.75],qty:5}
+};
+const SHIP={sp:["eBay SpeedPAK",1200,1.5,8,true],jp:["日本郵便（関税は相手払い）",900,1.2,12,false],cr:["クーリエ（FedEx・DHL）",2800,2.2,4,true]};
+const C_BASE=[["アメリカ","us",60],["イギリス","uk",10],["ドイツ","eu",8],["フランス","eu",6],["オーストラリア","au",10],["カナダ","ca",6]];
+const C_MAG=[["アメリカ","us",40],["イギリス","uk",18],["ドイツ","eu",14],["フランス","eu",8],["イタリア","eu",5],["オーストラリア","au",15]];
+const CHAPTERS=[
+ {n:1,t:"最初の1品を売って発送する",tip:"在庫から1品を選んで出品しよう。リサーチで相場を調べてから値段を決めると売れやすい。",ok:g=>g.st.shipped>=1},
+ {n:2,t:"良い評価を5件集める",tip:"Handling time（3日）以内に発送し、DDPで送り、傷は正直に書こう。",ok:g=>g.fb.pos>=5},
+ {n:3,t:"リミットアップに成功する",tip:"事務所でリミットアップを申請できる。販売8件以上・良い評価5件以上・良い評価の割合90%以上が条件。",ok:g=>g.limit.items>10},
+ {n:4,t:"古物商許可を取って、中古品を仕入れて売る",tip:"事務所から警察署へ古物商許可を申請（19,000円・10日かかる）。許可が出たらリサイクルショップ・フリマ・骨董市で仕入れられる。",ok:g=>g.st.usedSold>=1},
+ {n:5,t:"1か月の利益5万円",tip:"相場より安く仕入れられる中古品をねらおう。利益は「売上−仕入れ−送料−関税−返金」。事務所で今月の利益を確認できる。",ok:g=>Object.values(g.mp||{}).some(v=>v>=50000)},
+ {n:6,t:"eBaymagで海外の他の国にも5件売る",tip:"事務所でeBaymagを使い始めると、イギリス・ヨーロッパ・オーストラリアの買い手が増える。EU向けもDDPで送ろう。",ok:g=>g.st.magSold>=5},
+ {n:7,t:"Top Ratedになる",tip:"毎月20日に判定。直近90日で販売30件以上・欠陥0.5%以下（または3件以下）・発送遅れ3%以下・良い評価の割合98%以上が目安。",ok:g=>g.level==="Top Rated"},
+ {n:8,t:"eBayストアを開く",tip:"事務所でeBayストアを開ける（月4,500円）。落札手数料が下がり、「まとめて出品」と「メーカー直取引」が使えるようになる。",ok:g=>g.store},
+ {n:9,t:"1か月の利益30万円",tip:"ストアを開いたら2回目のリミットアップ（100品・15,000ドル）を申請しよう。メーカー直取引でまとめて安く仕入れ、まとめて出品で数を増やすのがコツ。",ok:g=>Object.values(g.mp||{}).some(v=>v>=300000)},
+ {n:10,t:"年間売上1,000万円を達成し、確定申告を乗り切る",tip:"1年＝360日。1年間の売上が1,000万円をこえた年の確定申告（翌年1日目に始まる）で、2問以上正解しよう。",ok:g=>(g.taxOk||[]).some(y=>(g.ys[y]||0)>=10000000)},
+ {n:11,t:"フリープレイ：称号をすべて集めよう",tip:"全10章クリア！事務所の「称号」で、まだ取っていない称号を確認できます。",ok:()=>false}
+];
+const LIMIT0={items:10,usd:500};
+
+// ---- 状態 ----
+let G=null;
+function gDefaults(g){
+ const d={know:0,homeDay:-99,level:"Above Standard",license:0,licDay:0,mag:0,warn:0,restrictUntil:0,mods:[],hist:[],mp:{},visited:{},shops:{},pending:[],
+  store:0,ys:{},yc:{},taxOk:[],taxDone:[],ach:{},countries:{},
+  st:{sold:0,shipped:0,salesYen:0,profitYen:0,usedSold:0,magSold:0,late:0,honest:0,research:0,ddu:0,scamOK:0,refunds:0,maxRate:0}};
+ for(const k in d)if(g[k]===undefined)g[k]=d[k];
+ for(const k in d.st)if(g.st[k]===undefined)g.st[k]=d.st[k];
+ g.v=2;return g;
+}
+function gNew(){
+ G=gDefaults({v:2,day:1,money:30000,rate:150,ap:3,uid:1,
+  inv:HOME_ITEMS.map(k=>({u:0,k,cost:0,used:1,flaw:GITEMS[k][6],mk:mkt(k)})),listings:[],orders:[],transit:[],
+  fb:{pos:0,neu:0,neg:0},defects:0,limit:Object.assign({},LIMIT0),chapter:1,st:{},log:[],research:{},cleared:[]});
+ G.inv.forEach(i=>i.u=G.uid++);
+ gLog("🌅 1日目。家の押し入れから、売れそうな物が5つ見つかった！");
+ gLog("まずは「リサーチ」で相場を調べてから「出品」してみよう。");
+ gSave();
+}
+function mkt(k){return Math.round(GITEMS[k][3]*(0.9+Math.random()*0.2))}
+function gSave(){mem.game=G;save()}
+function gLog(t){G.log.push(t);if(G.log.length>40)G.log.shift()}
+const yen=n=>Math.round(n).toLocaleString("ja-JP")+"円";
+const usd=n=>"$"+(Math.round(n*100)/100).toFixed(2).replace(/\.00$/,"");
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+function monthKey(day){return Math.floor((day-1)/30)+1}
+function yearKey(day){return Math.floor((day-1)/360)+1}
+function addProfit(v){G.st.profitYen+=v;const m=monthKey(G.day);G.mp[m]=(G.mp[m]||0)+v}
+function mod(type){return G.mods.filter(m=>m.type===type&&m.until>=G.day).reduce((a,m)=>a*(m.v),1)}
+function addMod(type,v,days,label){G.mods=G.mods.filter(m=>m.until>=G.day);G.mods.push({type,v,until:G.day+days-1,label})}
+
+// ---- お金の計算 ----
+function feeRate(){return (G.store?0.127:0.136)*(G.level==="Below Standard"?1.3:1)*(G.level==="Top Rated"&&G.store?0.9:1)*mod("fee")}
+function netYen(price){return (price*(1-feeRate()-0.0135)-(price>10?0.40:0.30))*G.rate*0.98}
+function shipCost(k,m){const s=SHIP[m];return Math.round((s[1]+s[2]*GITEMS[k][4])*mod("ship"))}
+function dutyYen(price,cc){if(cc==="us")return price*0.15*G.rate;if(cc==="eu")return 5*(G.rate*1.13);return 0}
+function listedUsd(){return G.listings.reduce((a,l)=>a+l.price,0)}
+function mkNow(l){return l.mk*mod("mk_"+GENRE_OF[GITEMS[l.k][1]])}
+
+// ---- 画面 ----
+function renderGame(){
+ if(!G&&mem.game)G=gDefaults(mem.game);
+ if(!G){gTitle();return}
+ if(G.taxDue)return gTax();
+ if(G.pending&&G.pending.length)return gEvent();
+ gMain();
+}
+function gFrame(bg,chars,body){
+ app.innerHTML=`<div class="gwrap"><canvas id="gcv" width="160" height="96"></canvas>${body}</div>`;
+ scene(bg,chars);window.scrollTo(0,0);
+}
+function gTitle(){
+ gFrame("night",[["hero",40,62],["box",72,64,"still"],["buyer",104,62,0,true]],`
+ <div class="gbox" style="text-align:center"><div style="font-size:22px;font-weight:bold;letter-spacing:2px">eBayセラー物語</div><div class="date" style="color:#ccc">日本から世界へ売る、新人セラーの物語</div></div>
+ ${mem.game?'<button class="gbtn" id="gc">つづきから</button>':""}<button class="gbtn" id="gs">はじめから</button>
+ <div class="gbox gsmall">遊び方：1日に3回行動できます。仕入れ・リサーチ・出品・発送をくり返して、章の目標を達成しよう。朝にはいろいろな出来事が起こります。手数料や関税はアプリで学んだ数字と同じです。<br>※相場や売れ方はゲーム用の作り物です。</div>`);
+ const gc=document.getElementById("gc");if(gc)gc.onclick=()=>{G=gDefaults(mem.game);renderGame()};
+ document.getElementById("gs").onclick=()=>{
+  if(mem.game&&!document.getElementById("gs").dataset.c){const b=document.getElementById("gs");b.dataset.c=1;b.textContent="前のデータは消えます。もう一度押すとはじめから";return}
+  gNew();gMain()};
+}
+function fbRate(){const t=G.fb.pos+G.fb.neg;return t?G.fb.pos/t:(G.fb.neu?1:0)}
+function gStatus(){
+ const ch=CHAPTERS[G.chapter-1];const t=G.fb.pos+G.fb.neu+G.fb.neg;
+ const mods=G.mods.filter(m=>m.until>=G.day&&m.label).map(m=>m.label);
+ return `<div class="gbox gstat"><div><b>${G.day}日目</b>（${monthKey(G.day)}か月目 ${((G.day-1)%30)+1}日）　<span class="glv">${G.level}</span></div><div>💴 ${yen(G.money)}　💱 1ドル＝${G.rate.toFixed(1)}円</div>
+ <div>⭐ 評価 ${G.fb.pos}（良い評価の割合 ${t?Math.round(fbRate()*100)+"%":"−"}）　⚡ 行動 ${"●".repeat(G.ap)}${"○".repeat(Math.max(0,3-G.ap))}</div>
+ <div>📦 在庫${G.inv.length}　🏷️ 出品${G.listings.length}/${G.limit.items}品・${usd(listedUsd())}/${usd(G.limit.usd)}　📮 未発送${G.orders.length}</div>
+ ${G.restrictUntil>=G.day?`<div style="color:#ff8a80">🚫 販売制限中（${G.restrictUntil}日目まで出品できない）</div>`:""}
+ ${mods.length?`<div class="gsmall">📢 ${esc(mods.join("／"))}</div>`:""}
+ <div class="gch">第${ch.n}章：${esc(ch.t)}</div></div>`;
+}
+function gMain(){
+ const late=G.orders.some(o=>G.day-o.day>=3);
+ const lg=G.log.slice(-5).map(t=>`<div>${esc(t)}</div>`).join("");
+ gFrame("room",[["hero",60,70],...(G.orders.length?[["box",84,72,"still"]]:[])],`${gStatus()}
+ <div class="gbox gmsg">${lg}</div>
+ <div class="ggrid">
+ <button class="gbtn" data-a="shop">🏪 仕入れ</button>
+ <button class="gbtn" data-a="res" ${G.ap?"":"disabled"}>🔍 リサーチ</button>
+ <button class="gbtn" data-a="list" ${G.ap?"":"disabled"}>🏷️ 出品</button>
+ <button class="gbtn ${late?"gwarn":""}" data-a="ship" ${G.ap?"":"disabled"}>📮 発送${G.orders.length?"("+G.orders.length+")":""}</button>
+ <button class="gbtn" data-a="study" ${G.ap?"":"disabled"}>📖 勉強</button>
+ <button class="gbtn" data-a="office">🏢 事務所</button>
+ </div>
+ <button class="gbtn gend" data-a="sleep">🌙 1日を終える</button>
+ <div class="ggrid2"><button class="gbtn gsub" data-a="items">📦 在庫と出品を見る</button><button class="gbtn gsub" data-a="title">タイトルへ</button></div>`);
+ app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>({shop:gShopList,res:gResearch,list:gListPick,ship:gShip,study:gStudy,office:gOffice,sleep:gSleep,items:gItems,title:gTitle})[b.dataset.a]());
+}
+function back(){return `<button class="gbtn gsub" id="gb">◀ もどる</button>`}
+function bindBack(f){const b=document.getElementById("gb");if(b)b.onclick=f||gMain}
+function useAp(){G.ap=Math.max(0,G.ap-1)}
+
+// 仕入れ：お店を選ぶ
+function gShopList(){
+ gFrame("shop",[["hero",72,70]],`${gStatus()}<div class="gbox"><b>どこで仕入れる？</b><div class="gsmall">その日に初めて行くお店は行動1回。同じ日なら何度でも見られます。</div></div>
+ ${Object.entries(SHOPS).filter(([id,s])=>!s.store||G.store).map(([id,s])=>{const lock=s.lic&&G.license<2;const been=G.visited[id]===G.day;
+  return `<button class="gbtn ${lock?"gsub":""}" data-s="${id}" ${(!been&&!G.ap)||lock?"disabled":""}>${s.n}<br><span class="gsmall">${s.d}${lock?"（🔒古物商許可が必要）":been?"（今日は行った）":""}</span></button>`}).join("")}
+ <div class="gbox"><b>🏠 家の不用品を探す</b><div class="gsmall">7日に1回、家の中から売れる物が見つかることがあります（行動は使いません）。</div>
+ ${(G.day-G.homeDay)>=7?'<button class="gbtn gsm" id="home">押し入れを探す</button>':`<div class="gsmall">次に探せるのは ${G.homeDay+7}日目</div>`}</div>${back()}`);
+ app.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>gShop(b.dataset.s));
+ const hm=document.getElementById("home");if(hm)hm.onclick=()=>{G.homeDay=G.day;const k=rnd(HOME_ITEMS);
+  G.inv.push({u:G.uid++,k,cost:0,used:1,flaw:Math.random()<0.5?1:0,mk:mkt(k)});gLog(`🏠 押し入れから${GITEMS[k][0]}が見つかった！`);gSave();gShopList()};
+ bindBack();
+}
+function gShop(id){
+ const S=SHOPS[id];
+ if(G.visited[id]!==G.day){
+  if(!G.ap)return;useAp();G.visited[id]=G.day;
+  G.shops[id]=shuffle(S.items).slice(0,4).map(k=>{let f=S.pr[0]+Math.random()*(S.pr[1]-S.pr[0]);const sp=GITEMS[k][7];let fake=0;
+   if(sp==="fake"&&id==="flea"&&Math.random()<0.5){fake=1;f=0.45+Math.random()*0.1}
+   return {k,price:Math.round(GITEMS[k][2]*f*mod("shop")/10)*10,fake}});
+  gLog(`🏪 ${S.n}に来た。`);gSave();
+ }
+ const list=G.shops[id];
+ gFrame(S.bg,S.bg==="flea"?[["hero",10,70]]:[["shop",30,70],["hero",110,70,0,true]],`${gStatus()}<div class="gbox"><b>${S.n}</b>（${S.d}）<div class="gsmall">${id==="flea"?"写真だけで判断するので、届いたら状態が悪いことも。相場よりずっと安いブランド品は要注意。":id==="antique"?"古い物の中には、海外に出せない物もある。":"相場（リサーチ済みなら表示）と比べて、利益が出るか考えよう。"}</div></div>
+ ${list.map((s,i)=>{const it=GITEMS[s.k];const r=G.research[s.k];return `<div class="gbox gitem"><div>${it[1]} <b>${esc(it[0])}</b>${it[5]?"（中古）":"（新品）"}${S.qty?`×${S.qty}個`:""}</div><div>仕入れ値 ${S.qty?`1個 ${yen(s.price)}（合計 ${yen(s.price*S.qty)}）`:yen(s.price)}　重さ ${it[4]}g</div><div class="gsmall">相場：${r?usd(r):"？（リサーチで調べられる）"}</div>${s.bought?'<div class="gsmall">購入済み</div>':`<button class="gbtn gsm" data-i="${i}" ${G.money<s.price*(S.qty||1)?"disabled":""}>買う</button>`}</div>`}).join("")}
+ <button class="gbtn gsub" id="gb">◀ お店えらびに戻る</button>`);
+ app.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{const s=list[b.dataset.i];const qn=S.qty||1;if(G.money<s.price*qn||s.bought)return;G.money-=s.price*qn;s.bought=1;
+  const yk=yearKey(G.day);G.yc[yk]=(G.yc[yk]||0)+s.price*qn;
+  if(qn>1){for(let j=0;j<qn;j++)G.inv.push({u:G.uid++,k:s.k,cost:s.price,used:0,flaw:0,mk:mkt(s.k)});gLog(`📦 ${GITEMS[s.k][0]}を${qn}個まとめて仕入れた（${yen(s.price*qn)}）。`);gSave();gShop(id);return}
+  const it=GITEMS[s.k];let flaw=it[6];if(id==="recycle"&&Math.random()<0.3)flaw=1;
+  let msg=`🛒 ${it[0]}を${yen(s.price)}で仕入れた。`;
+  if(id==="flea"&&Math.random()<0.25){flaw=1;msg+="…届いたら写真より傷が多かった。"}
+  G.inv.push({u:G.uid++,k:s.k,cost:s.price,used:it[5],flaw,mk:mkt(s.k),fake:s.fake,bought:id!=="mass"?1:0});
+  gLog(msg);gSave();gShop(id)});
+ bindBack(gShopList);
+}
+// リサーチ
+function gResearch(){
+ const keys=[...new Set(G.inv.map(i=>i.k).concat(Object.entries(G.shops).filter(([id])=>G.visited[id]===G.day).flatMap(([,l])=>l.map(s=>s.k))))];
+ if(!keys.length){alertBox("調べる商品がありません。");return}
+ useAp();
+ keys.forEach(k=>{const base=(G.inv.find(i=>i.k===k)||{}).mk||mkt(k);G.research[k]=Math.round(base*(0.97+Math.random()*0.06))});
+ G.st.research++;gLog(`🔍 Sold Itemsで${keys.length}種類の相場を調べた。`);gSave();
+ gFrame("office",[["hero",40,70]],`${gStatus()}<div class="gbox"><b>リサーチ結果（売れた値段の平均）</b>${keys.map(k=>`<div>${GITEMS[k][1]} ${esc(GITEMS[k][0])}：<b>${usd(G.research[k])}</b></div>`).join("")}<div class="gsmall">※出品価格は送料込みの値段として考えます。</div></div>${back()}`);
+ bindBack();
+}
+// 出品
+function gListPick(){
+ if(G.restrictUntil>=G.day){alertBox(`販売制限中です（${G.restrictUntil}日目まで）`);return}
+ if(!G.inv.length){alertBox("在庫がありません。仕入れよう。");return}
+ const bulkN=G.store?G.inv.filter(i=>G.research[i.k]&&GITEMS[i.k][7]!=="cites").length:0;
+ gFrame("room",[["hero",60,70]],`${gStatus()}<div class="gbox"><b>どれを出品する？</b></div>${G.store?`<div class="gbox"><b>🏪 まとめて出品（ストア特典）</b><div class="gsmall">相場を調べた商品を、相場どおりの値段・良い出品ページで3品まで一度に出品（行動1回）。傷は正直に書きます。</div><button class="gbtn gsm" id="bulk" ${bulkN?"":"disabled"}>まとめて出品する（対象 ${Math.min(3,bulkN)}品）</button></div>`:""}${G.inv.map(i=>`<div class="gbox gitem"><div>${GITEMS[i.k][1]} <b>${esc(GITEMS[i.k][0])}</b>${i.used?"（中古）":"（新品）"}</div><div class="gsmall">仕入れ値 ${yen(i.cost)}　相場 ${G.research[i.k]?usd(G.research[i.k]):"？"}${i.flaw?"　⚠️ 傷あり":""}</div><button class="gbtn gsm" data-u="${i.u}">これを出品</button></div>`).join("")}${back()}`);
+ app.querySelectorAll("[data-u]").forEach(b=>b.onclick=()=>gListPrice(G.inv.find(i=>i.u==b.dataset.u)));
+ const bk=document.getElementById("bulk");if(bk)bk.onclick=gBulk;
+ bindBack();
+}
+function gBulk(){
+ const c=G.inv.filter(i=>G.research[i.k]&&GITEMS[i.k][7]!=="cites").slice(0,3);let n=0;
+ for(const it of c){const price=G.research[it.k];
+  if(G.listings.length+1>G.limit.items||listedUsd()+price>G.limit.usd)break;
+  G.inv=G.inv.filter(i=>i!==it);G.listings.push(Object.assign({},it,{price,q:2,hide:0,day:G.day}));if(it.flaw)G.st.honest++;n++}
+ if(!n){alertBox("販売リミットをこえるので出品できません。");return}
+ useAp();gLog(`🏪 まとめて${n}品を出品した。`);gSave();gMain();
+}
+function gListPrice(item){
+ if(GITEMS[item.k][7]==="cites"){
+  G.inv=G.inv.filter(i=>i!==item);addProfit(-item.cost);G.warn++;gLog("🚫 象牙の根付はeBayで出品禁止。日本から輸出するにもワシントン条約の許可が必要…。仕入れ値は損になった。");
+  if(G.warn>=2){G.restrictUntil=G.day+7;gLog("🚫 警告が2回目。7日間の販売制限を受けた。")}gSave();
+  gFrame("trouble",[["ghost",72,40]],`<div class="gbox">🚫 <b>出品できません</b><div>象牙はeBayで禁止されている素材です。ワシントン条約の対象で、日本から海外に送るにも許可が必要です。</div><div class="gsmall">古い工芸品は、素材（象牙・べっ甲・ワニ革など）を必ず確かめよう。（アプリの「日本から販売するのに必要なこと」⑥）</div></div>${back()}`);bindBack();return}
+ const r=G.research[item.k];const guess=r||Math.round(GITEMS[item.k][3]*(0.6+Math.random()*0.8));
+ const opts=[0.85,1,1.15,1.35].map(f=>Math.max(5,Math.round(guess*f)));
+ gFrame("room",[["hero",60,70]],`${gStatus()}<div class="gbox"><b>${esc(GITEMS[item.k][0])}の値段（送料込み）</b><div class="gsmall">${r?`相場は ${usd(r)}。`:"⚠️ 相場を調べていないので、どの値段が正しいかわかりません。"}　高いほど売れにくくなります。</div></div>
+ ${opts.map((p,i)=>{const prof=netYen(p)-item.cost-shipCost(item.k,"sp")-dutyYen(p,"us");return `<button class="gbtn" data-p="${p}">${usd(p)}　<span class="gsmall">${["安め","ふつう","高め","かなり高め"][i]}${r?`／アメリカ向け利益の目安 ${yen(prof)}`:""}</span></button>`}).join("")}${back()}`);
+ app.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>gListQuality(item,+b.dataset.p));
+ bindBack(gListPick);
+}
+function gListQuality(item,price){
+ const qs=[["写真の背景は？",[["白い背景で明るく撮る",1],["散らかった部屋のまま撮る",0]]],
+  ["タイトルは？",[[`ブランド・型番・特徴を入れる（例：Japan Limited ...）`,1],["「WOW!! Look!! Rare!!」",0]]]];
+ if(item.flaw)qs.push(["傷はどうする？",[["写真と説明文で正直に伝える",1],["書かない（売れやすそう…）",-1]]]);
+ if(GITEMS[item.k][1]==="🎵")qs.push(["電圧はどう書く？",[["「日本の100V仕様。変圧器が必要」と書く",1],["書かない",-1]]]);
+ if(GITEMS[item.k][1]==="🎮")qs.push(["地域（リージョン）はどう書く？",[["「日本版。海外の本体では動かない場合あり」と書く",1],["書かない",-1]]]);
+ let q=0,score=0,hide=0;
+ function show(){
+  const Q=qs[q];
+  gFrame("room",[["hero",60,70]],`${gStatus()}<div class="gbox"><b>出品ページ作り（${q+1}/${qs.length}）</b><div>${esc(Q[0])}</div></div>${shuffle(Q[1]).map(o=>`<button class="gbtn" data-s="${o[1]}">${esc(o[0])}</button>`).join("")}`);
+  app.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{const s=+b.dataset.s;if(s<0)hide=1;else score+=s;if(Q[0]==="傷はどうする？"&&s>0)G.st.honest++;q++;q<qs.length?show():finish()});
+ }
+ function finish(){
+  if(G.listings.length+1>G.limit.items||listedUsd()+price>G.limit.usd){
+   gFrame("office",[["hero",60,70]],`${gStatus()}<div class="gbox">⚠️ 販売リミットをこえるので出品できません。<br>リミット：${G.limit.items}品・${usd(G.limit.usd)}（いま ${G.listings.length}品・${usd(listedUsd())}）<div class="gsmall">売れて枠が空くのを待つか、条件を満たしたら事務所でリミットアップを申請しよう。</div></div>${back()}`);bindBack();return}
+  useAp();G.inv=G.inv.filter(i=>i.u!==item.u);
+  G.listings.push(Object.assign({},item,{price,q:Math.min(3,score),hide,day:G.day}));
+  gLog(`🏷️ ${GITEMS[item.k][0]}を${usd(price)}で出品した。${score>=2&&!hide?"良い出品ページができた！":""}`);
+  if(hide)gLog("（大事なことを書かなかった…。後でトラブルにならないといいけど）");
+  gSave();gMain();
+ }
+ show();
+}
+// 発送
+function gShip(){
+ if(!G.orders.length){alertBox("発送する注文はありません。");return}
+ gFrame("post",[["hero",30,70],["box",60,72,"still"],["shop",110,70,0,true]],`${gStatus()}<div class="gbox"><b>発送する注文</b><div class="gsmall">Handling timeは3日。アメリカ・EU向けはDDP（関税込み）で送らないとトラブルになりやすい。発送はまとめて行動1回。</div></div>
+ ${G.orders.map((o,i)=>`<div class="gbox gitem"><div>${GITEMS[o.k][1]} <b>${esc(GITEMS[o.k][0])}</b> → ${o.cn}</div><div class="gsmall">売値 ${usd(o.price)}　注文から${G.day-o.day}日${G.day-o.day>=3?" ⚠️ 期限切れ":""}</div>
+ <select class="gsel" data-i="${i}">${Object.entries(SHIP).map(([m,s])=>`<option value="${m}">${s[0]}：${yen(shipCost(o.k,m))}${s[4]?"（DDP）":""}・約${s[3]}日</option>`).join("")}</select>
+ <div class="gsmall" id="dty${i}"></div></div>`).join("")}
+ <button class="gbtn" id="sendall">まとめて発送する（行動1回）</button>${back()}`);
+ const upd=()=>app.querySelectorAll(".gsel").forEach(s=>{const o=G.orders[s.dataset.i],m=s.value,ddp=SHIP[m][4];const d=dutyYen(o.price,o.cc);
+  document.getElementById("dty"+s.dataset.i).textContent=ddp?(d?`関税の前払い：${yen(d)}`:"この国はゲーム内では関税なし"):((o.cc==="us"||o.cc==="eu")?"⚠️ DDPではないので、関税トラブルの危険あり":"")});
+ app.querySelectorAll(".gsel").forEach(s=>s.onchange=upd);upd();
+ document.getElementById("sendall").onclick=()=>{
+  let total=0;app.querySelectorAll(".gsel").forEach(s=>{const o=G.orders[s.dataset.i],m=s.value,c=shipCost(o.k,m),d=SHIP[m][4]?dutyYen(o.price,o.cc):0;total+=c+d;
+   o.m=m;o.shipCost=c;o.duty=d;o.late=G.day-o.day>3;o.arrive=G.day+SHIP[m][3]});
+  useAp();if(G.money<total)gLog("💳 資金が足りないので、クレジットカードで払った（資金がマイナスに）。");G.money-=total;
+  G.orders.forEach(o=>{G.transit.push(o);G.st.shipped++;if(o.late)G.st.late++;if(!SHIP[o.m][4]&&(o.cc==="us"||o.cc==="eu"))G.st.ddu++;addProfit(-(o.shipCost+o.duty));G.hist.push({day:G.day,late:o.late?1:0,defect:0,u:o.u})});
+  gLog(`📮 ${G.orders.length}件を発送した（送料・関税 ${yen(total)}）。追跡番号も登録！`);
+  G.orders=[];gCheckChapter();gSave();G._clear?gClear():gMain();
+ };
+ bindBack();
+}
+// 勉強
+function gStudy(){
+ const pool=STAGES.flatMap(s=>s.quiz);const q=pool[Math.floor(Math.random()*pool.length)];const order=shuffle([0,1,2,3]);
+ gFrame("office",[["hero",40,70]],`${gStatus()}<div class="gbox"><b>📖 勉強タイム</b><div>${esc(q[0])}</div></div>${order.map(i=>`<button class="gbtn" data-k="${i}">${esc(q[1][i])}</button>`).join("")}${back()}`);
+ app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{useAp();const ok=+b.dataset.k===q[2];
+  if(ok){G.know=Math.min(10,G.know+1);gLog(`📖 勉強して知識が上がった！（知識 ${G.know}/10：売れやすさが少し上がる）`)}else gLog("📖 勉強したが、まちがえた。");
+  gSave();gFrame("office",[["hero",40,70]],`${gStatus()}<div class="gbox">${ok?"⭕ 正解！知識が1上がった。":"❌ ざんねん。"}<div>正解：<b>${esc(q[1][q[2]])}</b></div><div class="gsmall">${esc(q[3])}</div></div>${back()}`);bindBack()});
+ bindBack();
+}
+// 事務所
+function periodStats(){
+ const from=G.day-90;const h=G.hist.filter(x=>x.day>from);const n=h.length;
+ const d=h.reduce((a,x)=>a+x.defect,0),l=h.reduce((a,x)=>a+x.late,0);
+ return {n,d,l,dr:n?d/n:0,lr:n?l/n:0};
+}
+function gOffice(){
+ const ch=CHAPTERS[G.chapter-1];const t=G.fb.pos+G.fb.neu+G.fb.neg,rt=fbRate();
+ const can=G.st.sold>=8&&G.fb.pos>=5&&rt>=0.9&&G.limit.items===10;
+ const ps=periodStats();const m=monthKey(G.day);const magOpen=G.chapter>=6;
+ gFrame("office",[["hero",40,70]],`${gStatus()}<div class="gbox"><b>🏢 事務所</b>
+ <div>章の目標：${esc(ch.t)}</div><div class="gsmall">ヒント：${esc(ch.tip)}</div></div>
+ <div class="gbox"><b>成績</b><div>販売 ${G.st.sold}件　発送 ${G.st.shipped}件</div><div>評価：良い ${G.fb.pos}／普通 ${G.fb.neu}／悪い ${G.fb.neg}　警告 ${G.warn}</div>
+ <div>今月（${m}か月目）の利益 <b>${yen(G.mp[m]||0)}</b>${m>1?`　先月 ${yen(G.mp[m-1]||0)}`:""}</div><div>これまでの利益 ${yen(G.st.profitYen)}　知識 ${G.know}/10</div></div>
+ <div class="gbox"><b>セラーレベル：${G.level}</b><div class="gsmall">毎月20日に判定。直近90日：販売 ${ps.n}件・欠陥 ${(ps.dr*100).toFixed(1)}%・発送遅れ ${(ps.lr*100).toFixed(1)}%・良い評価 ${t?Math.round(rt*100):0}%<br>Top Ratedの目安：販売30件以上・欠陥0.5%以下（または3件以下）・遅れ3%以下（または5件以下）・良い評価98%以上<br>Below Standard：欠陥2%超（欠陥4件以上のとき）。手数料が上がり、売れにくくなる</div></div>
+ <div class="gbox"><b>リミットアップ申請</b><div class="gsmall">条件：販売8件以上（${G.st.sold}）・良い評価5件以上（${G.fb.pos}）・良い評価の割合90%以上（${t?Math.round(rt*100):0}%）<br>割合は「良い÷（良い＋悪い）」で計算（普通の評価は数えない。実際のeBayと同じ）。悪い評価をもらっても、良い評価を積み重ねれば回復します。</div>
+ ${G.limit.items>10?`<div>✅ リミットアップ済み（${G.limit.items}品・${usd(G.limit.usd)}）</div>`:`<button class="gbtn gsm" id="lu">申請する</button>`}
+ ${G.limit.items===30?`<div class="gsmall" style="margin-top:6px">2回目の申請（100品・15,000ドル）：ストアを開いている・販売60件以上（${G.st.sold}）・良い評価の割合98%以上</div><button class="gbtn gsm" id="lu2">2回目を申請する</button>`:""}</div>
+ <div class="gbox"><b>🏪 eBayストア</b><div class="gsmall">月4,500円（毎月1日に支払い）。ゲームでは落札手数料が13.6%→12.7%に下がり、Top Ratedならさらに10%引き。「まとめて出品」と「メーカー直取引」が使える。</div>
+ ${G.store?`<div>✅ 営業中</div><button class="gbtn gsm gsub" id="stc">ストアを閉じる</button>`:`<button class="gbtn gsm" id="sto" ${G.chapter>=8?"":"disabled"}>ストアを開く（4,500円）${G.chapter>=8?"":"（第8章で解放）"}</button>`}</div>
+ <div class="gbox"><b>📅 年間売上</b>${Object.keys(G.ys).length?Object.entries(G.ys).map(([y,v])=>`<div>${y}年目：${yen(v)}${(G.taxOk||[]).includes(+y)?"（確定申告 済み✅）":""}</div>`).join(""):"<div>まだありません</div>"}<div class="gsmall">1年＝360日。翌年1日目に前の年の確定申告があります。</div></div>
+ <button class="gbtn" id="achv">🎖️ 称号（${Object.keys(G.ach).length}/${ACH.length}）</button>
+ <div class="gbox"><b>👮 古物商許可</b><div class="gsmall">中古品を仕入れて売るのに必要。警察署に申請（手数料19,000円）。ゲームでは許可が出るまで10日。</div>
+ ${G.license===2?"<div>✅ 許可あり</div>":G.license===1?`<div>⏳ 審査中（${G.licDay}日目に許可の予定）</div>`:`<button class="gbtn gsm" id="lic" ${G.money<19000?"disabled":""}>警察署に申請する（19,000円）</button>`}</div>
+ <div class="gbox"><b>🌍 eBaymag</b><div class="gsmall">ebay.comの出品を、イギリス・ドイツ・オーストラリアなどのeBayにも同時に出す無料ツール。アメリカ以外の買い手が増える。</div>
+ ${G.mag?`<div>✅ 使用中（アメリカ以外への販売 ${G.st.magSold}件）</div>`:`<button class="gbtn gsm" id="mag" ${magOpen?"":"disabled"}>使い始める${magOpen?"":"（第6章で解放）"}</button>`}</div>${back()}`);
+ const lu=document.getElementById("lu");
+ if(lu)lu.onclick=()=>{if(can){G.limit={items:30,usd:3000};gLog("🎉 リミットアップ成功！30品・3,000ドルまで出品できるようになった。");gCheckChapter();gSave();G._clear?gClear():gOffice()}
+  else alertBox("まだ条件を満たしていません。")};
+ const lic=document.getElementById("lic");
+ if(lic)lic.onclick=()=>{G.money-=19000;addProfit(-19000);G.license=1;G.licDay=G.day+10;gLog("👮 警察署で古物商許可を申請した（19,000円）。10日後に許可が出る予定。");gSave();
+  gFrame("police",[["police",40,70],["hero",100,70,0,true]],`<div class="gbox">👮「申請を受け付けました。審査が終わるまでお待ちください。」<div class="gsmall">実際の許可は、申請から40日ほどかかることがあります。</div></div>${back()}`);bindBack(gOffice)};
+ const lu2=document.getElementById("lu2");
+ if(lu2)lu2.onclick=()=>{if(G.store&&G.st.sold>=60&&fbRate()>=0.98){G.limit={items:100,usd:15000};gLog("🎉 2回目のリミットアップ成功！100品・15,000ドルまで出品できる。");gSave();gOffice()}else alertBox("まだ条件を満たしていません。")};
+ const sto=document.getElementById("sto");
+ if(sto)sto.onclick=()=>{G.store=1;G.money-=4500;addProfit(-4500);gLog("🏪 eBayストアを開いた！手数料が下がり、まとめて出品・メーカー直取引が使えるようになった。");gCheckChapter();gSave();G._clear?gClear():gOffice()};
+ const stc=document.getElementById("stc");
+ if(stc)stc.onclick=()=>{if(!stc.dataset.c){stc.dataset.c=1;stc.textContent="本当に閉じる（もう一度押す）";return}G.store=0;gLog("🏪 ストアを閉じた。");gSave();gOffice()};
+ document.getElementById("achv").onclick=gAch;
+ const mg=document.getElementById("mag");
+ if(mg)mg.onclick=()=>{G.mag=1;gLog("🌍 eBaymagを使い始めた！ヨーロッパやオーストラリアの買い手にも表示されるようになった。");gSave();gOffice()};
+ bindBack();
+}
+// 在庫一覧
+function gItems(){
+ gFrame("room",[["hero",60,70]],`${gStatus()}<div class="gbox"><b>📦 在庫</b>${G.inv.length?G.inv.map(i=>`<div>${GITEMS[i.k][1]} ${esc(GITEMS[i.k][0])}（仕入れ ${yen(i.cost)}）</div>`).join(""):"<div>なし</div>"}</div>
+ <div class="gbox"><b>🏷️ 出品中</b>${G.listings.length?G.listings.map(l=>`<div>${GITEMS[l.k][1]} ${esc(GITEMS[l.k][0])}　${usd(l.price)}（出品から${G.day-l.day}日） <a href="#" data-x="${l.u}" class="gx">取り下げ</a></div>`).join(""):"<div>なし</div>"}</div>
+ <div class="gbox"><b>🚚 配送中</b>${G.transit.length?G.transit.map(t=>`<div>${esc(GITEMS[t.k][0])} → ${t.cn}（あと${Math.max(0,t.arrive-G.day)}日）</div>`).join(""):"<div>なし</div>"}</div>${back()}`);
+ app.querySelectorAll(".gx").forEach(a=>a.onclick=e=>{e.preventDefault();const l=G.listings.find(x=>x.u==a.dataset.x);G.listings=G.listings.filter(x=>x!==l);
+  G.inv.push(toItem(l));gLog(`${GITEMS[l.k][0]}の出品を取り下げた。`);gSave();gItems()});
+ bindBack();
+}
+function toItem(o){return {u:o.u,k:o.k,cost:o.cost,used:o.used,flaw:o.flaw,mk:o.mk,fake:o.fake,bought:o.bought}}
+
+// ---- 返金・欠陥などの共通処理 ----
+function refund(o,why){G.money-=o.inc;addProfit(-o.inc);G.st.refunds=(G.st.refunds||0)+1;const yk=yearKey(G.day);G.ys[yk]=(G.ys[yk]||0)-o.price*G.rate;return `↩️ 返金（${yen(o.inc)}）${why?"："+why:""}`}
+function defect(u){let h=u!==undefined?G.hist.find(x=>x.u===u):null;if(!h){h={day:G.day,late:0,defect:0};G.hist.push(h)}h.defect=1;G.defects++}
+function sellNow(l,price,cn){
+ const c=cn||wpick(G.mag?C_MAG:C_BASE);const inc=netYen(price);
+ G.money+=inc;G.st.sold++;G.st.salesYen+=price*G.rate;addProfit(inc-l.cost);
+ const yk=yearKey(G.day);G.ys[yk]=(G.ys[yk]||0)+price*G.rate;G.countries[c[0]]=1;G.st.maxRate=Math.max(G.st.maxRate||0,G.rate);
+ if(l.bought)G.st.usedSold++;if(G.mag&&c[1]!=="us")G.st.magSold++;
+ G.orders.push(Object.assign({},l,{price,cn:c[0],cc:c[1],day:G.day,inc,mag:G.mag&&c[1]!=="us"?1:0}));
+ G.listings=G.listings.filter(x=>x!==l);
+ return `💰 ${GITEMS[l.k][0]}が${usd(price)}で売れた！（${c[0]}）手数料を引いて${yen(inc)}が入金。`;
+}
+
+// ---- 出来事（朝） ----
+const EVENTS=[
+ {id:"offer",w:8,c:g=>g.listings.length,run:g=>{const l=rnd(g.listings);const off=Math.round(l.price*0.85),cnt=Math.round(l.price*0.93);return {bg:"room",ch:[["buyer",100,70,0,true],["hero",40,70]],t:`✉️ Best Offer（値下げ交渉）が来た！「${GITEMS[l.k][0]}を${usd(off)}で買いたいです」（出品価格 ${usd(l.price)}）`,
+  o:[["受ける（すぐ売れる）",()=>sellNow(l,off)],[`少しだけ下げて提案する（${usd(cnt)}）`,()=>Math.random()<0.6?sellNow(l,cnt)+"（カウンターオファー成功）":"😐 買い手は去っていった。"],["断る",()=>"丁寧に断った。"]]}}},
+ {id:"question",w:8,c:g=>g.listings.length,run:g=>{const l=rnd(g.listings);return {bg:"room",ch:[["buyer",100,70,0,true],["hero",40,70]],t:`✉️ 「${GITEMS[l.k][0]}の状態をもっと詳しく教えて」と質問が来た。`,
+  o:[["すぐ丁寧に返信する（定型文を使う）",()=>{l.q=Math.min(3,l.q+1);return "👍 すぐ返信したら、ウォッチが増えた！売れやすくなった。"}],["あとで返信する",()=>{l.q=Math.max(0,l.q-0.5);return "😐 返信が遅れて、買い手の関心が下がった。"}]]}}},
+ {id:"inr",w:6,c:g=>g.transit.some(t=>!t.done),run:g=>{const t=rnd(g.transit.filter(x=>!x.done));return {bg:"trouble",ch:[["ghost",72,40]],t:`👻 未着ゴースト出現！${t.cn}の買い手「${GITEMS[t.k][0]}がまだ届きません」（到着予定まであと${Math.max(0,t.arrive-g.day)}日）`,
+  o:[["追跡番号を伝えて、もう少し待ってもらう",()=>{t.calm=1;return "✅ 追跡情報を見せたら安心してもらえた。"}],["無視する",()=>{t.case=1;return "⚠️ 買い手がケース（Case）を開いた…。"}],["すぐ全額返金する",()=>{t.done="refunded";return refund(t,"先に返金")+"。買い手は喜んだが、お金は戻ってこない。"}]]}}},
+ {id:"snad",w:5,c:g=>g.transit.some(t=>t.used&&!t.done),run:g=>{const t=rnd(g.transit.filter(x=>x.used&&!x.done));return {bg:"trouble",ch:[["ghost",72,40]],t:`👻 「${GITEMS[t.k][0]}、説明と少し違う気がする」と連絡が来た（${t.cn}）。`,
+  o:[["謝って、返品を受け付ける",()=>{t.done="return";return "返品を受け付けた。商品が戻ったら返金する。"}],["一部返金（20%）を提案する",()=>{if(Math.random()<0.7){const r=Math.round(t.inc*0.2);g.money-=r;addProfit(-r);t.done="partial";return `✅ 一部返金（${yen(r)}）で納得してもらえた。`}t.done="return";return "😐 一部返金は断られ、返品になった。"}],["「説明どおりです」と断る",()=>{t.case=1;return "⚠️ 買い手がケースを開いた…。"}]]}}},
+ {id:"cancel",w:4,c:g=>g.orders.length,run:g=>{const o=rnd(g.orders);return {bg:"room",ch:[["buyer",100,70,0,true],["hero",40,70]],t:`✉️ 「まちがえて買ったのでキャンセルしたい」（${GITEMS[o.k][0]}・未発送）`,
+  o:[["すぐキャンセルに応じる",()=>{g.orders=g.orders.filter(x=>x!==o);const r=refund(o,"キャンセル");g.inv.push(toItem(o));g.st.sold--;if(o.bought)g.st.usedSold=Math.max(0,g.st.usedSold-1);if(o.mag)g.st.magSold=Math.max(0,g.st.magSold-1);addProfit(o.cost);return "✅ 発送前なのでキャンセルに応じた（"+r+"）。商品は在庫に戻った。買い手都合のキャンセルは欠陥にはならない。"}],["断る",()=>{o.angry=1;return "😐 断った。買い手は不満そう…。"}]]}}},
+ {id:"broken",w:3,c:g=>g.orders.some(o=>GITEMS[o.k][7]==="fragile"),run:g=>{const o=rnd(g.orders.filter(x=>GITEMS[x.k][7]==="fragile"));const cost=Math.round(GITEMS[o.k][2]?GITEMS[o.k][2]*1.1:6000);return {bg:"trouble",ch:[["ghost",72,40]],t:`👻 発送しようとしたら、${GITEMS[o.k][0]}が壊れていた！（保管中の落下）`,
+  o:[["キャンセルして返金する（欠陥になる）",()=>{g.orders=g.orders.filter(x=>x!==o);const r=refund(o,"在庫切れキャンセル");defect();return "⚠️ "+r+"。在庫切れキャンセルは欠陥（Defect）として記録された。"}],[`同じ物を買い直して送る（${yen(cost)}）`,()=>{g.money-=cost;addProfit(-cost);return "✅ 買い直して約束を守った。お金はかかったが評価は守れた。"}]]}}},
+ {id:"offsite",w:3,c:()=>true,run:g=>({bg:"trouble",ch:[["ghost",72,40]],t:"✉️ 「eBayの外で直接取引しよう。手数料がかからないよ」とメッセージが来た。",
+  o:[["断る（規約違反なので）",()=>{g.st.scamOK++;return "✅ 正しい判断。eBayの外での取引は規約違反で、詐欺の危険もある。"}],["応じる",()=>{const l=Math.max(0,Math.min(g.money,15000));g.money-=l;addProfit(-l);g.warn++;if(g.warn>=2)g.restrictUntil=g.day+7;return `💸 詐欺だった！${yen(l)}をだまし取られ、eBayから警告も受けた。`}]]})},
+ {id:"phish",w:3,c:()=>true,run:g=>({bg:"trouble",ch:[["ghost",72,40]],t:"✉️ 「eBayです。アカウントが停止されます。このリンクからログインしてください」というメールが来た。",
+  o:[["リンクは開かず、eBayの公式アプリで確認する",()=>{g.st.scamOK++;return "✅ 偽物のメール（フィッシング）だった。公式アプリには何の通知もなかった。"}],["リンクを開いてログインする",()=>{const l=Math.max(0,Math.min(g.money,20000));g.money-=l;addProfit(-l);return `💸 フィッシング詐欺だった！パスワードを盗まれ、${yen(l)}の被害…。すぐにパスワードを変えた。`}]]})},
+ {id:"vero",w:3,c:g=>g.listings.some(l=>GITEMS[l.k][1]==="⌚"),run:g=>{const l=rnd(g.listings.filter(x=>GITEMS[x.k][1]==="⌚"));return {bg:"trouble",ch:[["ghost",72,40]],t:`👻 ${GITEMS[l.k][0]}に「本物かどうか確認したい」と問い合わせが来た。`,
+  o:[["保証書や購入記録の写真を追加する",()=>{if(l.fake){g.listings=g.listings.filter(x=>x!==l);addProfit(-l.cost);g.warn++;if(g.warn>=2)g.restrictUntil=g.day+7;return "🚫 調べたら偽物だった…。出品を取り下げ、eBayから警告を受けた。相場より安すぎるブランド品は要注意。"}l.q=Math.min(3,l.q+1);return "✅ 本物の証拠を見せて信頼された。売れやすくなった。"}],["無視する",()=>{l.q=Math.max(0,l.q-1);return "😐 買い手の信頼を失った。"}]]}}},
+ {id:"fbfix",w:3,c:g=>g.fb.neg>0&&g.fb.pos>0,run:g=>({bg:"room",ch:[["hero",40,70],["buyer",100,70,0,true]],t:"✉️ 前に悪い評価を付けた買い手から「対応が良ければ評価を見直してもいい」と連絡が来た。",
+  o:[["丁寧に謝って、一部返金する（3,000円）",()=>{g.money-=3000;addProfit(-3000);if(Math.random()<0.5){g.fb.neg--;g.fb.pos++;return "⭐ 評価を良いものに変えてもらえた！"}return "😐 気持ちは伝わったが、評価は変わらなかった。"}],["何もしない",()=>"何もしなかった。"]]})},
+ {id:"repeat",w:3,c:g=>g.listings.length&&g.fb.pos>=3,run:g=>{const l=rnd(g.listings);return {bg:"happy",ch:[["buyer",72,60]],t:`😊 前に買ってくれた人がまた来た！「${GITEMS[l.k][0]}もください」`,o:[["ありがとう！",()=>sellNow(l,l.price)+"（リピーター）"]]}}},
+ {id:"dutyq",w:4,c:g=>g.listings.length,run:g=>({bg:"room",ch:[["buyer",100,70,0,true],["hero",40,70]],t:"✉️ アメリカの買い手から「関税は後で請求されますか？」と質問。",
+  o:[["「関税込みです（DDP）。受け取り時の支払いはありません」と答える",()=>{g.listings.forEach(l=>l.q=Math.min(3,l.q+0.3));return "👍 安心して買ってもらえそう。出品全体が少し売れやすくなった。"}],["「わかりません」と答える",()=>"😐 買い手は不安そうだった。"]]})},
+ {id:"weak",w:4,c:()=>true,run:g=>({bg:"night",ch:[["hero",72,70,"still"]],t:"💱 円安が進んでいる！ドルの売上が円で増える。",o:[["うれしい",()=>{g.rate=Math.min(180,g.rate*1.03);return `1ドル＝${g.rate.toFixed(1)}円になった。`}]]})},
+ {id:"strong",w:4,c:()=>true,run:g=>({bg:"night",ch:[["hero",72,70,"still"]],t:"💱 円高が進んでいる…。ドルの売上が円で減る。",o:[["しかたない",()=>{g.rate=Math.max(120,g.rate*0.97);return `1ドル＝${g.rate.toFixed(1)}円になった。`}]]})},
+ {id:"boom",w:4,c:()=>true,run:g=>{const gs=[["card","トレカ"],["camera","カメラ"],["game","レトロゲーム"],["watch","腕時計"],["wa","着物・和雑貨"]];const x=rnd(gs);return {bg:"happy",ch:[["coin",72,40,"still"]],t:`📈 海外で${x[1]}ブーム！SNSで話題になっている。`,o:[["チャンス！",()=>{addMod("mk_"+x[0],1.3,10,`${x[1]}ブーム中`);return `10日間、${x[1]}の相場が30%上がる！`}]]}}},
+ {id:"holiday",w:3,c:g=>((g.day-1)%360)>=300,run:g=>({bg:"happy",ch:[["coin",72,40,"still"]],t:"🎄 海外は年末商戦！プレゼントを買う人が増えている。",o:[["売りどき！",()=>{addMod("sale",1.5,7,"年末商戦");return "7日間、売れやすくなる！"}]]})},
+ {id:"shipup",w:3,c:()=>true,run:g=>({bg:"post",ch:[["shop",72,70]],t:"📮 配送会社のお知らせ：燃料費の値上がりで、送料が上がります。",o:[["わかった",()=>{addMod("ship",1.1,14,"送料10%値上げ");return "14日間、送料が10%上がる。価格の見直しも考えよう。"}]]})},
+ {id:"sale",w:4,c:()=>true,run:g=>({bg:"shop",ch:[["shop",72,70]],t:"🏷️ お店のセール情報！今日は仕入れ値が20%安い。",o:[["行かなきゃ！",()=>{addMod("shop",0.8,1,"仕入れセール");return "今日初めて行くお店は、仕入れ値が20%安い。"}]]})},
+ {id:"delay",w:3,c:g=>g.transit.length,run:g=>({bg:"post",ch:[["box",72,72,"still"]],t:"🌀 大雪の影響で、国際便が遅れている。",o:[["買い手に連絡しておく",()=>{g.transit.forEach(t=>{t.arrive+=3;t.calm=1});return "配送中の荷物が3日遅れる。先に連絡したので、買い手は納得してくれた。"}],["何もしない",()=>{g.transit.forEach(t=>t.arrive+=3);return "配送中の荷物が3日遅れる…。"}]]})},
+ {id:"campaign",w:3,c:()=>true,run:g=>({bg:"happy",ch:[["coin",72,40,"still"]],t:"🎉 eBayのキャンペーン：落札手数料が割引に！",o:[["やった！",()=>{addMod("fee",0.85,7,"手数料割引");return "7日間、落札手数料が15%安くなる。"}]]})},
+ {id:"news",w:3,c:()=>true,run:g=>({bg:"office",ch:[["hero",40,70]],t:"📰 ニュース：「海外の関税のルールが変わるかもしれない」",o:[["eBayの日本語サポート（セラーポータル）で最新情報を確認する",()=>{g.know=Math.min(10,g.know+1);return "📖 最新情報を確認した。知識が1上がった。"}],["気にしない",()=>"……。"]]})},
+ {id:"sick",w:3,c:()=>true,run:g=>({bg:"room",ch:[["hero",60,70,"still"]],t:"🤒 かぜをひいてしまった…。",o:[["今日は無理せず休む",()=>{g.ap=1;return "今日は行動1回だけ。体が一番大事。"}],["がんばる",()=>{g.ap=2;g.know=Math.max(0,g.know-1);return "行動は2回。でもぼーっとして知識が1下がった…。"}]]})},
+ {id:"gift",w:3,c:()=>true,run:g=>{const k=rnd(HOME_ITEMS);return {bg:"room",ch:[["hero",40,70],["buyer",100,70,0,true]],t:`🎁 友だちが「使わないからあげる」と${GITEMS[k][0]}をくれた。`,o:[["ありがとう！",()=>{g.inv.push({u:g.uid++,k,cost:0,used:1,flaw:Math.random()<0.5?1:0,mk:mkt(k)});return "在庫に追加した。"}]]}}},
+ {id:"packing",w:3,c:g=>g.orders.length,run:g=>({bg:"post",ch:[["box",72,72,"still"]],t:"📦 梱包材がなくなった！",o:[["買いに行く（1,500円）",()=>{g.money-=1500;addProfit(-1500);return "梱包材を買いそろえた。"}],["あり合わせの紙でつつむ",()=>{g.orders.forEach(o=>o.weakPack=1);return "⚠️ 今の注文は壊れやすくなったかも…。"}]]})},
+ {id:"photo",w:2,c:g=>g.st.sold>=10&&g.listings.length,run:g=>({bg:"room",ch:[["hero",60,70]],t:"📷 たくさん撮ってきたので、写真の腕が上がった！",o:[["うれしい",()=>{g.listings.forEach(l=>l.q=Math.min(3,l.q+0.5));return "出品中の商品が少し売れやすくなった。"}]]})},
+ {id:"rival",w:3,c:g=>g.listings.length,run:g=>{const l=rnd(g.listings);return {bg:"office",ch:[["hero",40,70]],t:`📉 ライバルが${GITEMS[l.k][0]}を安く出品し始めた。`,o:[["こちらも5%値下げする",()=>{l.price=Math.max(5,Math.round(l.price*0.95));return `${usd(l.price)}に値下げした。`}],["値段はそのまま",()=>{l.mk*=0.93;return "相場が少し下がった…。"}]]}}},
+ {id:"watcher",w:4,c:g=>g.listings.some(l=>g.day-l.day>=5),run:g=>{const l=rnd(g.listings.filter(x=>g.day-x.day>=5));return {bg:"room",ch:[["hero",40,70]],t:`👀 ${GITEMS[l.k][0]}をウォッチしている人が3人いる。`,o:[["ウォッチしている人に10%引きのオファーを送る",()=>Math.random()<0.6?sellNow(l,Math.round(l.price*0.9))+"（オファー成功）":"😐 今回は反応がなかった。"],["待つ",()=>"そのまま様子を見ることにした。"]]}}},
+ {id:"kobutsu",w:2,c:g=>g.license===2&&!g.kobutsuBook,run:g=>({bg:"police",ch:[["police",40,70],["hero",100,70,0,true]],t:"👮 古物商は、仕入れた中古品の記録（古物台帳）を付ける決まりがあります。",o:[["きちんと記録を付ける",()=>{g.kobutsuBook=1;g.know=Math.min(10,g.know+1);return "✅ 記録を付ける習慣ができた。知識が1上がった。"}]]})},
+ {id:"customs",w:2,c:g=>g.orders.some(o=>o.price*g.rate>200000),run:g=>({bg:"post",ch:[["shop",72,70]],t:"📮 郵便局「中身の合計が20万円を超える荷物は、税関への輸出申告が必要です」",o:[["配送会社に申告を頼む",()=>"✅ 正しく申告した。"]]})},
+ {id:"thanks",w:4,c:g=>g.fb.pos>=1,run:g=>({bg:"happy",ch:[["buyer",72,60]],t:"💌 買い手から写真付きのお礼が届いた。「日本からの梱包、とてもていねいでした！」",o:[["うれしい！",()=>{addMod("sale",1.1,3,"やる気アップ");return "やる気が出た！3日間、少し売れやすくなる。"}]]})}
+];
+function pickEvent(){
+ const ok=EVENTS.filter(e=>e.w>0&&e.c(G));if(!ok.length)return null;
+ const t=ok.reduce((a,e)=>a+e.w,0);let r=Math.random()*t;for(const e of ok){if((r-=e.w)<0)return e}return ok[0];
+}
+function gEvent(){
+ const e=EVENTS.find(x=>x.id===G.pending[0]);
+ if(!e||!e.c(G)){G.pending.shift();gSave();return renderGame()}
+ const d=e.run(G);
+ gFrame(d.bg,d.ch,`${gStatus()}<div class="gbox"><b>🌅 朝の出来事</b><div>${esc(d.t)}</div></div>${d.o.map((o,i)=>`<button class="gbtn" data-o="${i}">${esc(o[0])}</button>`).join("")}`);
+ app.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{
+  if(b.dataset.used)return;app.querySelectorAll("[data-o]").forEach(x=>x.dataset.used=1);
+  const res=d.o[b.dataset.o][1]();G.pending.shift();gLog(res);gCheckChapter();gSave();
+  gFrame(d.bg,d.ch,`${gStatus()}<div class="gbox">${esc(res)}</div><button class="gbtn" id="gn">つづける</button>`);
+  document.getElementById("gn").onclick=()=>G._clear?gClear():renderGame()});
+}
+
+// ---- 1日の終わり ----
+function gSleep(){
+ const ev=[];
+ const fbBonus=1+Math.min(0.5,G.fb.pos*0.03)-G.fb.neg*0.05;
+ const lvB=G.level==="Top Rated"?1.15:G.level==="Below Standard"?0.7:1;
+ G.listings.slice().forEach(l=>{
+  const pf=Math.min(3,Math.max(0.03,Math.pow(mkNow(l)/l.price,4)));
+  const p=0.10*pf*(0.7+l.q*0.25+(l.hide?0.15:0))*Math.max(0.3,fbBonus)*lvB*(1+G.know*0.02)*mod("sale");
+  if(Math.random()<p)ev.push(sellNow(l,l.price));
+ });
+ // 到着と評価
+ G.transit.slice().forEach(t=>{if(G.day+1<t.arrive&&t.done!=="refunded")return;
+  G.transit=G.transit.filter(x=>x!==t);
+  if(t.done==="refunded"){G.fb.pos++;ev.push(`⭐ 先に返金した${t.cn}の買い手から良い評価。`);return}
+  if(t.done==="return"){ev.push(refund(t,"返品が戻ってきた")+`。${GITEMS[t.k][0]}は在庫に戻った。`);const it=toItem(t);it.flaw=1;G.inv.push(it);return}
+  if(t.case){if(Math.random()<0.6){G.fb.neg++;const r=refund(t,"ケースでeBayが買い手の味方に");defect(t.u);ev.push(`👻 ケースが解決しないまま終わった。${r}・悪い評価・欠陥が記録された…。`);return}}
+  const ddp=SHIP[t.m][4];
+  if(!ddp&&(t.cc==="us"||t.cc==="eu")&&Math.random()<0.5){G.fb.neg++;defect(t.u);const r=refund(t,"関税の支払い拒否");
+   ev.push(`👻 関税トラブル！${t.cn}の買い手が関税の支払いを断り、荷物が届かなかった。${r}・悪い評価・欠陥…。DDPで送るべきだった。`);return}
+  if(t.hide&&t.done!=="partial"&&Math.random()<0.5){G.fb.neg++;const r=refund(t,"説明と違う");
+   ev.push(`👻「説明と違う！」…${r}と悪い評価。大事なことは正直に書こう。`);return}
+  if(GITEMS[t.k][7]==="fragile"&&(t.weakPack||t.m==="jp")&&Math.random()<0.25){G.fb.neu++;const r=refund(t,"配送中に破損");ev.push(`📦 ${GITEMS[t.k][0]}が配送中に壊れた…。${r}。梱包はしっかりと。`);return}
+  if(t.fake){G.fb.neg++;defect(t.u);G.warn++;if(G.warn>=2)G.restrictUntil=G.day+7;const r=refund(t,"偽物");ev.push(`🚫 買い手が鑑定したら偽物だった！${r}・悪い評価・eBayからの警告…。`);return}
+  const p=0.82+t.q*0.05-(t.late?0.25:0)-(t.angry?0.3:0)+(t.calm?0.05:0);
+  if(Math.random()<p){G.fb.pos++;ev.push(`⭐ ${t.cn}の買い手から良い評価！「Great seller, fast shipping!」`)}
+  else{G.fb.neu++;ev.push(`😐 ${t.cn}の買い手から普通の評価。${t.late?"発送が遅れたのが原因かも。":""}`)}
+ });
+ G.orders.forEach(o=>{if(G.day+1-o.day===3)ev.push(`⚠️ ${GITEMS[o.k][0]}の発送期限は今日まで！`)});
+ // 為替と日付
+ const old=G.rate;G.rate=Math.max(120,Math.min(180,G.rate*(1+(Math.random()-0.5)*0.012)));
+ const oldM=monthKey(G.day);G.day++;G.ap=3;
+ if(Math.abs(G.rate-old)>0.7)ev.push(G.rate>old?"💱 円安が進んだ（ドルの売上が円で増える）":"💱 円高が進んだ（ドルの売上が円で減る）");
+ if(monthKey(G.day)!==oldM){ev.push(`🗓️ ${oldM}か月目が終わった。利益は ${yen(G.mp[oldM]||0)}。`);
+  if(G.store){G.money-=4500;addProfit(-4500);ev.push("🏪 ストアの月額4,500円を支払った。")}}
+ if(G.day>1&&(G.day-1)%360===0){const y=yearKey(G.day)-1;if(!G.taxDone.includes(y)){G.taxDue=y;ev.push(`📑 ${y}年目が終わった。年間売上 ${yen(G.ys[y]||0)}。確定申告の季節がやってきた…。`)}}
+ if(G.license===1&&G.day>=G.licDay){G.license=2;ev.push("👮 古物商許可が出た！リサイクルショップ・フリマアプリ・骨董市で仕入れられるようになった。")}
+ if(G.restrictUntil===G.day-1)ev.push("✅ 販売制限が終わった。また出品できる。");
+ // セラーレベル判定（毎月20日）
+ if(((G.day-1)%30)+1===20){const ps=periodStats();const o=G.level;
+  if(ps.d>=4&&ps.dr>0.02)G.level="Below Standard";
+  else if(ps.n>=30&&(ps.dr<=0.005||ps.d<=3)&&(ps.lr<=0.03||ps.l<=5)&&fbRate()>=0.98)G.level="Top Rated";
+  else G.level="Above Standard";
+  ev.push(`📊 セラーレベル判定：${G.level}${G.level!==o?`（${o}から変わった）`:""}`+(G.level==="Below Standard"?"　手数料が上がり、売れにくくなる…。欠陥を減らそう。":G.level==="Top Rated"?"　検索で表示されやすくなった！":""));}
+ // 朝の出来事
+ if(G.day>=3&&Math.random()<0.45){const e=pickEvent();if(e)G.pending.push(e.id)}
+ G.mods=G.mods.filter(m=>m.until>=G.day);
+ if(G.hist.length>400)G.hist=G.hist.filter(x=>x.day>G.day-100);
+ gLog(`🌅 ${G.day}日目の朝。`);ev.forEach(gLog);
+ if(G.money<0)gLog("⚠️ 資金がマイナスです。売上が入るまで仕入れはできません。");
+ gCheckChapter();gSave();
+ gFrame("night",[["hero",72,70,"still"]],`<div class="gbox"><b>🌙 ${G.day-1}日目の夜〜${G.day}日目の朝</b>${ev.length?ev.map(e=>`<div>${esc(e)}</div>`).join(""):"<div>特に何もなかった。</div>"}</div><button class="gbtn" id="gn">${G.day}日目をはじめる</button>`);
+ document.getElementById("gn").onclick=()=>G._clear?gClear():renderGame();
+}
+function wpick(list){const t=list.reduce((a,x)=>a+x[2],0);let r=Math.random()*t;for(const x of list){if((r-=x[2])<0)return x}return list[0]}
+function gCheckChapter(){
+ checkAch();
+ let ch=CHAPTERS[G.chapter-1];
+ while(ch&&ch.ok(G)&&!G.cleared.includes(ch.n)){G.cleared.push(ch.n);G._clear=ch.n;G.chapter=Math.min(CHAPTERS.length,G.chapter+1);gLog(`🏆 第${ch.n}章クリア！「${ch.t}」`);ch=CHAPTERS[G.chapter-1]}
+}
+function gClear(){
+ const n=G._clear;G._clear=null;gSave();
+ if(n===10){gFrame("happy",[["coin",30,30,"still"],["buyer",50,62],["hero",72,62],["shop",94,62,0,true],["coin",114,30,"still"]],`<div class="gbox" style="text-align:center"><div style="font-size:22px">🎉 全10章クリア！</div><div>あなたは立派な「eBay販売マスター」です。</div><div class="gsmall">${G.day}日目　販売 ${G.st.sold}件　良い評価 ${G.fb.pos}件<br>これまでの利益 ${yen(G.st.profitYen)}</div></div><div class="gbox gsmall">ゲームで覚えたこと（リサーチ・正直な出品・DDP・早い発送・ていねいな対応・記録と申告）は、本物のeBayでもそのまま大切です。このあとはフリープレイで称号集めを楽しめます。</div><button class="gbtn" id="gn">フリープレイを続ける</button>`);document.getElementById("gn").onclick=renderGame;return}
+ const next=CHAPTERS[G.chapter-1];
+ gFrame("night",[["coin",40,40,"still"],["hero",72,70],["coin",104,40,"still"]],`<div class="gbox" style="text-align:center"><div style="font-size:20px">🏆 第${n}章 クリア！</div><div>${esc(CHAPTERS[n-1].t)}</div></div>
+ <div class="gbox"><b>次の目標：第${next.n}章</b><div>${esc(next.t)}</div><div class="gsmall">${esc(next.tip)}</div></div><button class="gbtn" id="gn">つづける</button>`);
+ document.getElementById("gn").onclick=renderGame;
+}
+
+// ---- 確定申告 ----
+const TAXQ=[
+ ["海外のお客様への販売にかかる消費税は？",["免除される（輸出免税）","10%かかる","8%かかる","2倍かかる"],0,"輸出は消費税が免除されます（輸出免税）。"],
+ ["経費にできないものは？",["自分の毎日の食費","送料","eBayの手数料","梱包材"],0,"仕事に使ったお金が経費です。毎日の食費は経費になりません。"],
+ ["仕入れの消費税を還付してもらうために必要なのは？",["輸出の記録（伝票の控え）と仕入れの領収書","なにもいらない","買い手の写真","出品ページのスクリーンショットだけ"],0,"輸出の証明書類と仕入れの記録を保管しておきます。"],
+ ["ドルの売上は帳簿にどう書く？",["決めたルールで円に直して記録する","ドルのまま","書かない","好きなレートで毎回変える"],0,"同じルールで円に換算して記録します。"],
+ ["わからないことがあったら？",["税務署や税理士に相談する","SNSのうわさを信じる","申告しない","買い手に聞く"],0,"正確な判断は税務署や税理士に確認しましょう。"]
+];
+function gTax(){
+ const y=G.taxDue;const qs=shuffle(TAXQ).slice(0,3);let i=0,score=0;
+ function show(){const q=qs[i];const ord=shuffle([0,1,2,3]);
+  gFrame("office",[["hero",40,70],["police",100,70,0,true]],`<div class="gbox"><b>📑 ${y}年目の確定申告（${i+1}/3）</b><div class="gsmall">年間売上 ${yen(G.ys[y]||0)}　仕入れ ${yen(G.yc[y]||0)}</div><div>${esc(q[0])}</div></div>${ord.map(k=>`<button class="gbtn" data-k="${k}">${esc(q[1][k])}</button>`).join("")}`);
+  app.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{if(+b.dataset.k===q[2])score++;i++;i<3?show():done()});}
+ function done(){
+  let res;G.taxDone.push(y);G.taxDue=0;
+  if(score===3){const back=Math.round((G.yc[y]||0)*0.1);G.money+=back;addProfit(back);G.taxOk.push(y);res=`🎉 満点！正しく申告できた。課税事業者として申告した場合の目安として、仕入れにかかった消費税 ${yen(back)} が戻ってきた。`}
+  else if(score===2){G.taxOk.push(y);res="✅ 申告は無事に終わった。でも、もう少し勉強しておこう。"}
+  else{const pen=Math.max(5000,Math.round((G.ys[y]||0)*0.01));G.money-=pen;addProfit(-pen);res=`⚠️ 申告にまちがいがあり、あとで修正申告と追加の税金（${yen(pen)}）が必要になった…。アプリの段階12で復習しよう。`}
+  gLog(res);gCheckChapter();gSave();
+  gFrame("office",[["hero",40,70]],`<div class="gbox"><b>確定申告の結果：${score}/3問正解</b><div>${esc(res)}</div><div class="gsmall">※ゲームの申告は簡単にしたものです。実際は税務署や税理士に確認してください。</div></div><button class="gbtn" id="gn">つづける</button>`);
+  document.getElementById("gn").onclick=()=>G._clear?gClear():renderGame();
+ }
+ gFrame("office",[["hero",40,70],["police",100,70,0,true]],`<div class="gbox"><b>📑 確定申告の季節</b><div>${y}年目の売上と経費をまとめて、申告しよう。3問中2問以上正解で合格。</div></div><button class="gbtn" id="go">申告を始める</button>`);
+ document.getElementById("go").onclick=show;
+}
+// ---- 称号 ----
+const ACH=[
+ ["初売り","はじめて商品が売れた",g=>g.st.sold>=1],
+ ["百戦錬磨","100件売った",g=>g.st.sold>=100],
+ ["売れっ子セラー","500件売った",g=>g.st.sold>=500],
+ ["信頼の星","良い評価100件",g=>g.fb.pos>=100],
+ ["正直者","傷を正直に書いて10回出品",g=>g.st.honest>=10],
+ ["相場ハンター","リサーチ50回",g=>g.st.research>=50],
+ ["勉強家","知識10",g=>g.know>=10],
+ ["DDPマスター","50件発送し、アメリカ・EUにDDPなしで送ったことがない",g=>g.st.shipped>=50&&g.st.ddu===0],
+ ["詐欺を見破った","詐欺・フィッシングを3回見破った",g=>g.st.scamOK>=3],
+ ["世界のセラー","6つの国に売った",g=>Object.keys(g.countries).length>=6],
+ ["古物商","古物商許可を取った",g=>g.license===2],
+ ["ストアオーナー","eBayストアを開いた",g=>g.store],
+ ["トップセラー","Top Ratedになった",g=>g.level==="Top Rated"],
+ ["月商ドリーム","1か月の利益50万円",g=>Object.values(g.mp).some(v=>v>=500000)],
+ ["年商1,000万","年間売上1,000万円",g=>Object.values(g.ys).some(v=>v>=10000000)],
+ ["eBay販売マスター","全10章クリア",g=>g.cleared.includes(10)]
+];
+function checkAch(){ACH.forEach(a=>{if(!G.ach[a[0]]&&a[2](G)){G.ach[a[0]]=G.day;gLog(`🎖️ 称号「${a[0]}」を手に入れた！（${a[1]}）`)}})}
+function gAch(){
+ gFrame("happy",[["hero",72,60]],`<div class="gbox"><b>🎖️ 称号（${Object.keys(G.ach).length}/${ACH.length}）</b>${ACH.map(a=>`<div>${G.ach[a[0]]?"🎖️ <b>"+esc(a[0])+"</b>":"🔒 ？？？"}　<span class="gsmall">${esc(a[1])}${G.ach[a[0]]?`（${G.ach[a[0]]}日目）`:""}</span></div>`).join("")}</div><button class="gbtn gsub" id="gb">◀ 事務所にもどる</button>`);
+ bindBack(gOffice);
+}
+
 render();
 if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js").catch(()=>{})}
 </script>
