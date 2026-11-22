@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="eBay販売マスター">
+<meta name="theme-color" content="#1f4e79">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>eBay販売マスター by Urushihara v1.0</title>
+<style>
+:root{--main:#1f4e79;--acc:#e8a317;--ok:#2e7d32;--ng:#c62828;--bg:#f4f6f9;--card:#fff;--txt:#222;--sub:#666;--line:#dde2e8}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,"Hiragino Sans",sans-serif;background:var(--bg);color:var(--txt);font-size:17px;line-height:1.7;padding-bottom:calc(70px + env(safe-area-inset-bottom))}
+header{background:var(--main);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:19px}
+header .by{font-size:12px;opacity:.85}
+main{padding:14px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:6px 0}
+.bar>div{height:100%;background:var(--acc)}
+.stage{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--card);margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.stage .num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;background:var(--main);color:#fff;flex-shrink:0}
+.stage.locked{opacity:.45}.stage.locked .num{background:#999}
+.stage.passed .num{background:var(--ok)}
+.stage .t{font-weight:bold}.stage .s{font-size:13px;color:var(--sub)}
+h2{font-size:20px;margin:4px 0 10px;color:var(--main)}
+h3{font-size:17px;margin:18px 0 6px;border-left:5px solid var(--acc);padding-left:8px}
+.point{background:#fff8e6;border:1px solid #f0d48a;border-radius:10px;padding:10px 12px;margin:10px 0}
+.warn{background:#fdecea;border:1px solid #f5b5ae;border-radius:10px;padding:10px 12px;margin:10px 0}
+.date{font-size:12px;color:var(--sub)}
+button{font-size:17px;font-family:inherit;border:none;border-radius:12px;padding:13px 16px;background:var(--main);color:#fff;width:100%;margin-top:8px}
+button.sub{background:#e3e8ef;color:var(--txt)}
+button.opt{background:#fff;color:var(--txt);border:2px solid var(--line);text-align:left}
+button.opt.sel{border-color:var(--main);background:#e8f0f8}
+button.opt.right{border-color:var(--ok);background:#e8f5e9}
+button.opt.wrong{border-color:var(--ng);background:#fdecea}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:6px 0}
+td,th{border:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+th{background:#eef2f7}
+label{display:block;font-size:14px;color:var(--sub);margin-top:10px}
+input,select{width:100%;font-size:17px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.res{font-size:15px}.res .big{font-size:26px;font-weight:bold}
+.plus{color:var(--ok)}.minus{color:var(--ng)}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav a{flex:1;text-align:center;padding:9px 0 7px;font-size:12px;color:var(--sub);text-decoration:none}
+nav a .i{font-size:22px;display:block;line-height:1.2}
+nav a.on{color:var(--main);font-weight:bold}
+ul{padding-left:1.2em;margin:6px 0}
+.qhead{font-size:14px;color:var(--sub)}
+.exp{font-size:15px;margin-top:6px;padding:8px;background:#f7f9fb;border-radius:8px}
+</style>
+</head>
+<body>
+<header><h1>eBay販売マスター</h1><div class="by">by Urushihara v1.0</div></header>
+<main id="app"></main>
+<nav>
+<a href="#" data-tab="learn"><span class="i">📘</span>学ぶ</a>
+<a href="#" data-tab="calc"><span class="i">🧮</span>利益計算</a>
+<a href="#" data-tab="record"><span class="i">🏅</span>記録</a>
+</nav>
+<script>
+const INFO_DATE="2026年11月22日";
+const PASS=4, QN=5;
+// ---------- 保存（使えない環境でも動くように） ----------
+let mem={};
+function load(){try{const s=localStorage.getItem("ebayMaster");if(s)mem=JSON.parse(s)}catch(e){}}
+function save(){try{localStorage.setItem("ebayMaster",JSON.stringify(mem))}catch(e){}}
+load(); mem.passed=mem.passed||{};
+
+// ---------- 段階データ ----------
+const STAGES=[
+{id:1,title:"eBayとは",sub:"仕組み・市場・売れ筋",body:`
+<h3>eBayってどんな所？</h3>
+<p>eBay（イーベイ）は、アメリカ生まれの世界最大級のネット通販・オークションサイトです。世界190以上の国と地域に買い手（バイヤー）がいます。日本に住んだまま、海外の人に商品を売ることができます。これを<b>越境EC（えっきょうイーシー）</b>と言います。</p>
+<h3>売り方は2種類</h3>
+<table><tr><th>売り方</th><th>特徴</th></tr>
+<tr><td>オークション（Auction）</td><td>期間内でいちばん高い値段を付けた人が買う。珍しい物で値上がりが期待できる</td></tr>
+<tr><td>固定価格（Buy It Now）</td><td>決めた値段ですぐ買える。今の主流。初心者はまずこちら</td></tr></table>
+<h3>どのサイトに出すの？</h3>
+<p>日本のセラー（売り手）は、ふつう<b>アメリカのeBay（ebay.com）</b>に出品します。ebay.comの商品は、アメリカ以外の国の人にも表示されます。eBaymag（イーベイマグ）という公式ツールを使うと、イギリス・ドイツ・オーストラリアなどのeBayにも同時に出品できます（段階13で説明）。</p>
+<h3>日本から売れている物</h3>
+<ul><li>中古カメラ・レンズ</li><li>高級腕時計</li><li>トレーディングカード（ポケモンカード、ワンピースなど）</li><li>中古ブランドバッグ</li><li>フィギュア・おもちゃ・ゲーム</li></ul>
+<p>「日本の中古品は状態が良い」という信頼があり、イギリスやオーストラリアでも人気が広がっています。</p>
+<h3>日本語のサポートがある</h3>
+<p>イーベイ・ジャパンが日本語のサポートサイト「セラーポータル」を無料で用意しています。出品方法などを日本語の動画やマニュアルで学べます。英語が苦手でも始められます。</p>
+<div class="point">📌 まとめ<br>・eBayは世界中に売れる通販・オークションサイト<br>・日本のセラーは主にebay.comに出品<br>・初心者は固定価格（Buy It Now）から<br>・日本語サポート（セラーポータル）がある</div>`,
+quiz:[
+["eBayのように、日本から海外の人へネットで売ることを何と言う？",["越境EC","国内EC","フリマ","卸売"],0,"国境をこえて売るので「越境EC」と言います。"],
+["日本のセラーがふつう出品するサイトはどれ？",["ebay.com（アメリカ）","ebay.co.uk（イギリス）","ebay.de（ドイツ）","ヤフオク"],0,"日本のセラーは主にアメリカのebay.comに出品します。"],
+["決めた値段ですぐ買える売り方はどれ？",["Buy It Now（固定価格）","Auction（オークション）","Best Offer だけ","予約販売"],0,"Buy It Nowは固定価格で、今の主流です。"],
+["初心者におすすめの売り方は？",["固定価格（Buy It Now）","オークションだけ","まとめ売りだけ","予約販売"],0,"値段が読みやすく管理しやすいので、まずは固定価格から始めます。"],
+["オークション形式が向いているのはどんな商品？",["珍しくて値上がりが期待できる物","毎日たくさん売る日用品","値段がはっきり決まっている新品","重くて送料が高い物"],0,"欲しい人が競り合うと値段が上がるので、珍しい物に向いています。"],
+["eBayの買い手がいる国と地域の数は？",["190以上","約10","約50","日本だけ"],0,"世界190以上の国と地域に買い手がいます。"],
+["日本から売れている物として正しくないのはどれ？",["生鮮食品（刺身など）","中古カメラ・レンズ","高級腕時計","トレーディングカード"],0,"生ものは送れません。カメラ・時計・トレカは人気の商品です。"],
+["日本の中古品が海外で人気の理由は？",["状態が良いと信頼されているから","必ず新品より安いから","送料が無料だから","関税がかからないから"],0,"日本の中古品は品質が良いと評価されています。"],
+["イーベイ・ジャパンが用意している日本語のサポートサイトは？",["セラーポータル","バイヤーポータル","Seller Japan Club","eBay日本語版ショップ"],0,"「セラーポータル」で日本語の動画やマニュアルが見られます。"],
+["ebay.comに出品した商品について正しいのは？",["アメリカ以外の国の人にも表示される","アメリカの人にしか表示されない","日本の人にしか表示されない","表示される国を選べない"],0,"ebay.comの商品は、アメリカ以外の国の人にも表示されます。"]
+]},
+{id:2,title:"始める準備",sub:"アカウント・受取口座・許可・道具",body:`
+<h3>準備の流れ</h3>
+<table><tr><th>順番</th><th>やること</th></tr>
+<tr><td>1</td><td>eBay（ebay.com）のアカウントを作る</td></tr>
+<tr><td>2</td><td>Payoneer（ペイオニア）のアカウントを作る</td></tr>
+<tr><td>3</td><td>eBayとPayoneerをつなぐ（登録情報を一致させる）</td></tr>
+<tr><td>4</td><td>手数料支払い用のクレジットカードを登録</td></tr>
+<tr><td>5</td><td>Payoneerの書類審査（本人確認）</td></tr></table>
+<h3>Payoneer（ペイオニア）とは</h3>
+<p>eBayの売上金を受け取るためのオンライン口座です。売上はPayoneerに<b>米ドル</b>で入金され、そこから日本の銀行口座に円で引き出します。登録には売上を受け取る銀行口座の情報が必要です。</p>
+<div class="warn">⚠️ 個人・法人のアカウントの種類は、登録後に変更できません。開業届がありビジネス用の書類を出せる場合は「ビジネス」、それ以外は「パーソナル（個人）」を選びます。</div>
+<h3>クレジットカード</h3>
+<p>手数料の支払い用に、<b>海外で使えるVISAかMastercard</b>を登録します。</p>
+<h3>登録情報は必ず一致させる</h3>
+<p>名前・住所などが、eBayとPayoneerで同じでないと審査が進みません。住所の書き方（番地や建物名）までそろえましょう。</p>
+<h3>古物商許可（こぶつしょうきょか）</h3>
+<ul><li><b>自分の不用品を売るだけ</b>なら、ふつうは不要です</li><li><b>中古品を仕入れて売る</b>（転売する）場合は必要です。住所地の警察署で申請します</li></ul>
+<p>新品を店で買って売る場合などは扱いが異なります。迷ったら警察署の窓口で確認しましょう。</p>
+<h3>そろえたい道具</h3>
+<ul><li>スマホ（写真撮影）と白い背景（白い紙や布）</li><li>はかり（重さで送料が決まる）</li><li>メジャー（箱のサイズを測る）</li><li>梱包材（箱・緩衝材・テープ）</li></ul>
+<div class="point">📌 まとめ<br>・売上はPayoneerに米ドルで入り、日本の銀行へ引き出す<br>・個人/法人の種類は後で変えられない<br>・海外で使えるVISA/Mastercardが必要<br>・仕入れて中古品を売るなら古物商許可が必要</div>`,
+quiz:[
+["eBayの売上金を受け取るオンライン口座のサービスは？",["Payoneer（ペイオニア）","PayPay","Suica","楽天ペイ"],0,"日本のセラーはPayoneerで売上を受け取ります。"],
+["Payoneerに売上が入金されるときの通貨は？",["米ドル","日本円","ユーロ","ビットコイン"],0,"米ドルで入金され、日本の銀行に引き出すときに円に替えます。"],
+["Payoneerの個人・法人のアカウントの種類について正しいのは？",["登録後に変更できない","いつでも変更できる","1年に1回だけ変更できる","eBayが自動で決める"],0,"登録後に変更できないので、最初によく考えて選びます。"],
+["開業届がなく、ビジネス用の書類も出せない人はどの種類を選ぶ？",["パーソナル（個人）","ビジネス","どちらでもよい","両方作る"],0,"ビジネス用の書類を出せない場合は、パーソナルを選びます。"],
+["手数料の支払いに登録するカードは？",["海外で使えるVISAかMastercard","日本国内専用のカード","デビットカードは何でも可","ポイントカード"],0,"海外決済ができるVISA/Mastercardが必要です。"],
+["Payoneerの審査が進まない原因として多いのは？",["eBayとPayoneerの登録情報が一致していない","写真が少ない","出品数が少ない","英語が苦手"],0,"名前・住所などを両方で同じにする必要があります。"],
+["中古品を仕入れて売る場合に必要な許可は？",["古物商許可","酒類販売免許","食品衛生責任者","運転免許"],0,"中古品を仕入れて売るなら古物商許可が必要です。"],
+["古物商許可の申請先は？",["住所地の警察署","税務署","市役所の窓口","郵便局"],0,"住所地を管轄する警察署で申請します。"],
+["自分の不用品を売るだけの場合、古物商許可はふつう…",["不要","必ず必要","eBayの登録時に自動で取れる","海外の許可が必要"],0,"自分の物を売るだけなら、ふつうは不要です。"],
+["発送の準備で特に役立つ道具の組み合わせは？",["はかりとメジャー","電卓と辞書","カレンダーと時計","ハサミとのり"],0,"送料は重さと大きさで決まるので、はかりとメジャーが必要です。"]
+]},
+{id:3,title:"手数料と利益計算",sub:"何がいくら引かれるか",body:`
+<p class="date">情報確認日：${INFO_DATE}（手数料は変わることがあるので、セラーポータルで最新を確認してください）</p>
+<h3>引かれるお金の全体</h3>
+<table><tr><th>タイミング</th><th>手数料</th><th>目安</th></tr>
+<tr><td>出品するとき</td><td>出品手数料</td><td>毎月250品まで無料。超えると1品$0.35（ストアなし）</td></tr>
+<tr><td>売れたとき</td><td>落札手数料（FVF）</td><td>多くのカテゴリーで13.6%。本・音楽などは15.3%</td></tr>
+<tr><td>売れたとき</td><td>1注文ごとの手数料</td><td>$10超の注文は$0.40、$10以下は$0.30</td></tr>
+<tr><td>海外に売ったとき</td><td>海外決済手数料</td><td>日本のセラーは1.35%</td></tr>
+<tr><td>円に替えるとき</td><td>為替の手数料</td><td>Payoneerから引き出すときの差</td></tr></table>
+<h3>大事なポイント：送料にも手数料がかかる</h3>
+<p>落札手数料（FVF）は、商品代金だけでなく<b>送料や税金を含めた「売上総額」</b>にかかります。送料を高くしても、そのぶん手数料も増えます。</p>
+<h3>計算例（$50の商品・送料無料）</h3>
+<table><tr><td>落札手数料</td><td>$50 × 13.6% = $6.80</td></tr>
+<tr><td>1注文の手数料</td><td>$0.40</td></tr>
+<tr><td>海外決済手数料</td><td>$50 × 1.35% ≒ $0.68</td></tr>
+<tr><th>eBayに払う合計</th><th>約$7.88（売上の約16%）</th></tr></table>
+<p>ざっくり<b>「売上の約15〜16%はeBayに引かれる」</b>と覚えておきましょう。</p>
+<h3>利益の出し方</h3>
+<div class="point">利益 ＝ 売上（円） − eBay手数料 − 為替の手数料 − 仕入れ値 − 実際の送料 − 関税など</div>
+<p>アメリカ向けは関税をセラーが先払いする方法（DDP）が必須になっています（段階9で説明）。その費用も計算に入れます。下の「利益計算」タブで実際に計算できます。</p>
+<div class="point">📌 まとめ<br>・落札手数料は多くのカテゴリーで13.6%<br>・手数料は送料を含めた売上総額にかかる<br>・海外決済手数料1.35%と1注文$0.30〜0.40も忘れずに<br>・目安：売上の約15〜16%がeBayの取り分</div>`,
+quiz:[
+["売れたときにかかる中心の手数料は？",["落札手数料（FVF）","出品手数料","ストア月額","広告費"],0,"Final Value Fee（FVF）が手数料の中心です。"],
+["多くのカテゴリーの落札手数料の率は？",["13.6%","5%","30%","1.35%"],0,"多くのカテゴリーで13.6%です（ストアなしの場合）。"],
+["落札手数料がかかる「売上総額」に含まれるのは？",["商品代金と送料（税金なども含む）","商品代金だけ","送料だけ","仕入れ値"],0,"送料や税金も含めた売上総額にかかります。"],
+["日本のセラーが海外に売ったときの海外決済手数料は？",["1.35%","0%","10%","13.6%"],0,"日本の住所のセラーは1.35%です。"],
+["$10を超える注文にかかる1注文ごとの手数料は？",["$0.40","$0.30","$1.00","無料"],0,"$10超は$0.40、$10以下は$0.30です。"],
+["出品手数料の無料枠（ストアなし）は毎月何品まで？",["250品","10品","1,000品","無制限"],0,"毎月250品まで無料です。"],
+["$50で売れたときの落札手数料（13.6%）は？",["$6.80","$0.68","$13.60","$5.00"],0,"50 × 0.136 = 6.80ドルです。"],
+["eBayに払う手数料の目安は売上のおよそ何%？",["15〜16%","1〜2%","40〜50%","0%"],0,"落札手数料＋1注文の手数料＋海外決済手数料で、約15〜16%です。"],
+["送料を高く設定するとどうなる？",["送料分にも手数料がかかり、手数料も増える","手数料は変わらない","手数料が安くなる","送料は売上に入らない"],0,"手数料は送料を含む売上総額にかかります。"],
+["利益の計算に入れなくてよいものは？",["自分の趣味の時間","仕入れ値","実際の送料","関税（DDP）の費用"],0,"仕入れ値・送料・関税は必ず計算に入れます。"]
+]},
+{id:4,title:"販売リミット",sub:"出品数の上限と増やし方",body:`
+<h3>販売リミット（セリングリミット）とは</h3>
+<p>eBayでは、出品できる<b>「数」</b>と<b>「合計金額」</b>に上限があります。これを販売リミット（セリングリミット）と言います。例えば「100品・5,000ドル」なら、出品中の商品は100品まで、合計5,000ドルまでです。</p>
+<h3>始めたばかりの上限</h3>
+<p>新しいセラーは、多くの場合<b>「月10品まで、または合計500ドルまで」</b>のどちらか先に達するほうが上限です（アカウントによって違います）。</p>
+<h3>リミットの確認方法</h3>
+<ul><li>Seller Hub（セラーハブ）の「Overview」→「Monthly limits」</li></ul>
+<h3>リミットを増やす（リミットアップ）</h3>
+<ul><li><b>自動で増える</b>：eBayは毎月アカウントを確認し、販売状況と評価をもとに自動で調整します</li>
+<li><b>自分で申請する</b>：セラーポータルに「リミットアップリクエストをする」が表示されたら申請できます。Seller Hubからも申請できます</li></ul>
+<p>申請できない状態のときは、ボタンが表示されません。</p>
+<h3>リミットアップのコツ</h3>
+<ul><li>まずは少ない数をしっかり売る</li><li>すぐ発送し、追跡番号を入れる</li><li>良い評価（フィードバック）を集める</li><li>返品やトラブルを起こさない</li><li>1か月ほど実績を積んでから申請する</li></ul>
+<div class="warn">⚠️ リミットが少ないからといって、アカウントを2つ以上作るのはやめましょう。規約違反として停止される危険があります。</div>
+<div class="point">📌 まとめ<br>・出品できる数と金額には上限がある<br>・最初は「10品または500ドル」程度が多い<br>・実績と評価で自動的に増える。申請もできる<br>・少しずつ確実に売って信頼を積むのが近道</div>`,
+quiz:[
+["販売リミットで制限されるものは？",["出品数と出品の合計金額","写真の枚数","メッセージの数","ログイン回数"],0,"出品できる数と合計金額に上限があります。"],
+["新しいセラーに多い最初のリミットは？",["月10品または500ドル","月1,000品または10万ドル","無制限","月1品"],0,"多くの場合、10品または500ドルのどちらか先に達するほうが上限です。"],
+["リミットが「100品・5,000ドル」のとき、出品できるのは？",["100品まで、かつ合計5,000ドルまで","100品なら金額は自由","5,000ドルなら品数は自由","100品と5,000ドルのどちらか好きな方"],0,"数と金額の両方の上限を守る必要があります。"],
+["リミットを確認する場所は？",["Seller Hubの「Monthly limits」","バイヤー用の検索画面","Payoneerの残高画面","郵便局のサイト"],0,"Seller HubのOverviewにあるMonthly limitsで確認します。"],
+["eBayはどのくらいの頻度でリミットを自動調整する？",["毎月","10年ごと","調整しない","毎時間"],0,"eBayは毎月アカウントを確認して調整します。"],
+["リミットアップを申請できる日本語のサイトは？",["セラーポータル","ヤフオク","Amazonセラーセントラル","メルカリ"],0,"セラーポータルに申請ボタンが表示されたら申請できます。"],
+["申請ボタンが表示されないのはどんなとき？",["申請できる状態でないとき","スマホを使っているとき","日曜日","英語設定のとき"],0,"申請できる状態でない場合は表示されません。"],
+["リミットアップに役立つ行動は？",["すぐ発送して良い評価を集める","いきなり高額品をたくさん出品する","発送を遅らせる","返品を断り続ける"],0,"実績と良い評価が信頼につながります。"],
+["リミットが少ないとき、やってはいけないことは？",["アカウントを2つ以上作る","少ない数を確実に売る","評価を集める","サポートに相談する"],0,"複数アカウントは規約違反で停止される危険があります。"],
+["リミットアップの近道として正しい考え方は？",["少しずつ確実に売って信頼を積む","とにかく出品数を増やす","価格を極端に安くする","評価は気にしない"],0,"実績を積み重ねることが一番の近道です。"]
+]}
+];
+const FUTURE=[["商品リサーチ","売れた商品の調べ方・相場"],["仕入れ","仕入れ先と仕入れ値の決め方"],["出品ページ作り","タイトル・写真・説明文・価格"],["梱包と発送","SpeedPAK・日本郵便・梱包"],["関税・輸出ルール","米国DDP・EU・送れない物"],["お客様対応","英語定型文・返品・トラブル"],["アカウントを守る","評価・Defect・セラーレベル"],["税金と記帳","輸出免税・確定申告"],["売上を伸ばす","ストア・eBaymag・広告"]];
+FUTURE.forEach((f,i)=>STAGES.push({id:i+5,title:f[0],sub:f[1],future:true}));
+
+// ---------- 画面 ----------
+const app=document.getElementById("app");
+let tab="learn";
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function unlocked(st){return st.id===1||!!mem.passed[st.id-1]}
+function setNav(){document.querySelectorAll("nav a").forEach(a=>a.classList.toggle("on",a.dataset.tab===tab))}
+document.querySelectorAll("nav a").forEach(a=>a.onclick=e=>{e.preventDefault();tab=a.dataset.tab;render()});
+
+function render(){setNav();window.scrollTo(0,0);
+ if(tab==="learn")renderList();else if(tab==="calc")renderCalc();else renderRecord();}
+
+function renderList(){
+ const n=Object.keys(mem.passed).length;
+ let h=`<div class="card"><b>学習の進み具合</b>　${n} / 13 段階 合格<div class="bar"><div style="width:${n/13*100}%"></div></div>
+ <div class="date">各段階のテストで${QN}問中${PASS}問以上正解すると、次の段階が開きます。</div></div>`;
+ STAGES.forEach(st=>{
+  const p=mem.passed[st.id],u=unlocked(st);
+  let cls="stage"+(p?" passed":"")+(!u?" locked":"");
+  let s=st.future?"準備中（次のバージョンで追加）":p?`合格 ${p.score}/${QN}（${p.date}）`:u?st.sub:"🔒 前の段階に合格すると開きます";
+  h+=`<div class="${cls}" data-id="${st.id}"><div class="num">${p?"✓":st.id}</div><div><div class="t">段階${st.id}　${esc(st.title)}</div><div class="s">${esc(s)}</div></div></div>`;
+ });
+ app.innerHTML=h;
+ app.querySelectorAll(".stage").forEach(el=>el.onclick=()=>{
+  const st=STAGES.find(s=>s.id==el.dataset.id);
+  if(!unlocked(st)){alertBox("前の段階のテストに合格すると開きます。");return}
+  if(st.future){alertBox("この段階は次のバージョンで追加します。");return}
+  renderStage(st);
+ });
+}
+function alertBox(msg){
+ const d=document.createElement("div");d.className="card";d.style.cssText="position:fixed;left:14px;right:14px;top:40%;z-index:9;text-align:center;border:2px solid #1f4e79";
+ d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),1800);
+}
+function renderStage(st){window.scrollTo(0,0);
+ app.innerHTML=`<div class="card"><h2>段階${st.id}　${esc(st.title)}</h2>${st.body}</div>
+ <button id="go">合格テストを受ける（${QN}問）</button><button class="sub" id="back">一覧に戻る</button>`;
+ document.getElementById("go").onclick=()=>startQuiz(st);
+ document.getElementById("back").onclick=renderList;
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startQuiz(st){
+ const qs=shuffle(st.quiz).slice(0,QN).map(q=>{const order=shuffle([0,1,2,3]);return{q:q[0],opts:order.map(i=>q[1][i]),ans:order.indexOf(q[2]),exp:q[3]}});
+ let idx=0,answers=[];
+ function show(){window.scrollTo(0,0);
+  const q=qs[idx];
+  app.innerHTML=`<div class="card"><div class="qhead">段階${st.id}のテスト　${idx+1} / ${QN}問</div><div class="bar"><div style="width:${idx/QN*100}%"></div></div>
+  <p><b>${esc(q.q)}</b></p>${q.opts.map((o,i)=>`<button class="opt" data-i="${i}">${esc(o)}</button>`).join("")}</div>`;
+  app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{answers.push(+b.dataset.i);idx++;idx<QN?show():result()});
+ }
+ function result(){window.scrollTo(0,0);
+  const score=qs.reduce((s,q,i)=>s+(answers[i]===q.ans?1:0),0),ok=score>=PASS;
+  if(ok){const prev=mem.passed[st.id];const d=new Date();
+   if(!prev||score>=prev.score)mem.passed[st.id]={score,date:`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`};save();}
+  let h=`<div class="card" style="text-align:center"><div style="font-size:48px">${ok?"🎉":"📖"}</div>
+  <h2>${ok?"合格！":"もう少し！"}</h2><div class="res"><span class="big">${score} / ${QN}</span> 問正解</div>
+  <p>${ok?(st.id<4?`段階${st.id+1}が開きました。`:"段階5以降は次のバージョンで追加します。"):`合格は${PASS}問以上です。下の解説を読んで、もう一度挑戦しましょう。`}</p></div>`;
+  qs.forEach((q,i)=>{const r=answers[i]===q.ans;
+   h+=`<div class="card"><div class="qhead">${i+1}問目　${r?'<span class="plus">⭕ 正解</span>':'<span class="minus">❌ 不正解</span>'}</div><b>${esc(q.q)}</b>
+   ${r?"":`<div>あなたの答え：${esc(q.opts[answers[i]])}</div>`}<div>正解：<b>${esc(q.opts[q.ans])}</b></div><div class="exp">${esc(q.exp)}</div></div>`});
+  h+=ok?`<button id="next">一覧に戻る</button>`:`<button id="re">もう一度テスト（問題は入れ替わります）</button><button class="sub" id="read">解説を読み直す</button>`;
+  app.innerHTML=h;
+  if(ok)document.getElementById("next").onclick=renderList;
+  else{document.getElementById("re").onclick=()=>startQuiz(st);document.getElementById("read").onclick=()=>renderStage(st);}
+ }
+ show();
+}
+
+// ---------- 利益計算 ----------
+function renderCalc(){
+ const c=mem.calc||{price:50,ship:0,rate:150,fvf:13.6,cost:3000,realShip:2000,duty:0,fx:2};
+ app.innerHTML=`<div class="card"><h2>利益計算機</h2><p class="date">手数料率は${INFO_DATE}時点の目安です。カテゴリーによって違うので、必要なら変えてください。</p>
+ <label>販売価格（ドル）</label><input id="price" type="number" inputmode="decimal" value="${c.price}">
+ <label>買い手が払う送料（ドル）　送料無料なら0</label><input id="ship" type="number" inputmode="decimal" value="${c.ship}">
+ <label>為替レート（1ドル＝何円）</label><input id="rate" type="number" inputmode="decimal" value="${c.rate}">
+ <label>落札手数料の率（%）</label><select id="fvf">
+  <option value="13.6">13.6%（多くのカテゴリー）</option><option value="15.3">15.3%（本・映画・音楽）</option><option value="15">15%（時計・バッグなど一部）</option><option value="13.25">13.25%（一部カテゴリー）</option></select>
+ <label>仕入れ値（円）</label><input id="cost" type="number" inputmode="numeric" value="${c.cost}">
+ <label>実際にかかる送料（円）</label><input id="realShip" type="number" inputmode="numeric" value="${c.realShip}">
+ <label>関税・その他の費用（円）　米国向けDDPの関税など</label><input id="duty" type="number" inputmode="numeric" value="${c.duty}">
+ <label>円に替えるときの手数料（%）　目安として入力</label><input id="fx" type="number" inputmode="decimal" value="${c.fx}">
+ </div><div class="card res" id="out"></div>`;
+ document.getElementById("fvf").value=String(c.fvf);
+ const ids=["price","ship","rate","fvf","cost","realShip","duty","fx"];
+ function calc(){
+  const v={};ids.forEach(k=>v[k]=parseFloat(document.getElementById(k).value)||0);
+  mem.calc=v;save();
+  const total=v.price+v.ship;
+  const fvf=total*v.fvf/100, per=total>10?0.40:0.30, intl=total*0.0135;
+  const fee=fvf+per+intl, net=total-fee;
+  const yenNet=net*v.rate*(1-v.fx/100);
+  const profit=yenNet-v.cost-v.realShip-v.duty;
+  const salesYen=total*v.rate, rateP=salesYen?profit/salesYen*100:0;
+  const f=n=>Math.round(n).toLocaleString("ja-JP");
+  document.getElementById("out").innerHTML=`
+  <div>利益</div><div class="big ${profit>=0?"plus":"minus"}">${f(profit)} 円</div><div>利益率（売上に対して）：${rateP.toFixed(1)}%</div>
+  <table><tr><td>売上総額</td><td>$${total.toFixed(2)}（約${f(salesYen)}円）</td></tr>
+  <tr><td>落札手数料 ${v.fvf}%</td><td>−$${fvf.toFixed(2)}</td></tr>
+  <tr><td>1注文の手数料</td><td>−$${per.toFixed(2)}</td></tr>
+  <tr><td>海外決済手数料 1.35%</td><td>−$${intl.toFixed(2)}</td></tr>
+  <tr><th>eBay手数料の合計</th><th>−$${fee.toFixed(2)}（${total?(fee/total*100).toFixed(1):0}%）</th></tr>
+  <tr><td>円での受取額（為替手数料後）</td><td>${f(yenNet)}円</td></tr>
+  <tr><td>仕入れ値</td><td>−${f(v.cost)}円</td></tr>
+  <tr><td>実際の送料</td><td>−${f(v.realShip)}円</td></tr>
+  <tr><td>関税・その他</td><td>−${f(v.duty)}円</td></tr></table>
+  ${profit<0?'<div class="warn">赤字です。販売価格を上げるか、仕入れ値・送料を見直しましょう。</div>':""}`;
+ }
+ ids.forEach(k=>document.getElementById(k).addEventListener("input",calc));
+ calc();
+}
+
+// ---------- 記録 ----------
+function renderRecord(){
+ let h=`<div class="card"><h2>合格の記録</h2><table><tr><th>段階</th><th>点数</th><th>合格日</th></tr>`;
+ STAGES.forEach(st=>{const p=mem.passed[st.id];h+=`<tr><td>${st.id}. ${esc(st.title)}</td><td>${p?p.score+"/"+QN:"−"}</td><td>${p?p.date:"−"}</td></tr>`});
+ h+=`</table></div><div class="card"><b>このアプリについて</b><p>eBay販売マスター by Urushihara v1.0<br>情報確認日：${INFO_DATE}<br>手数料やルールは変わることがあります。実際の販売前にeBay公式（セラーポータル）で確認してください。</p>
+ <button class="sub" id="reset">記録をすべて消す</button></div>`;
+ app.innerHTML=h;
+ document.getElementById("reset").onclick=()=>{
+  const b=document.getElementById("reset");
+  if(b.dataset.c){mem={passed:{}};save();renderRecord();}else{b.dataset.c="1";b.textContent="本当に消す場合は、もう一度押してください";b.style.background="#c62828";b.style.color="#fff";}
+ };
+}
+render();
+if("serviceWorker" in navigator&&location.protocol==="https:"){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+</script>
+</body>
